@@ -1,7 +1,11 @@
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { ActivityIndicator, View } from "react-native";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
 import "../../global.css";
+
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -11,12 +15,14 @@ export default function RootLayout() {
     "Manrope-Medium": require("../assets/fonts/Manrope-Medium.ttf"),
   });
 
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
   if (!fontsLoaded) {
-    return (
-      <View className="flex-1 items-center justify-center bg-light-background dark:bg-dark-background">
-        <ActivityIndicator />
-      </View>
-    );
+    return null;
   }
 
   return (
