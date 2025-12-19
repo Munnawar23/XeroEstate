@@ -1,23 +1,65 @@
 import { useAuth } from '@/context/AuthContext';
+import { useSafePadding } from '@/hooks/useSafePadding';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import {
+  Alert,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
+
+interface SettingsItemProps {
+  icon: keyof typeof Ionicons.glyphMap;
+  title: string;
+  onPress?: () => void;
+  textStyle?: string;
+  showArrow?: boolean;
+}
+
+const SettingsItem = ({
+  icon,
+  title,
+  onPress,
+  textStyle,
+  showArrow = true,
+}: SettingsItemProps) => (
+  <TouchableOpacity
+    onPress={onPress}
+    className="flex flex-row items-center justify-between py-3"
+  >
+    <View className="flex flex-row items-center gap-3">
+      <Ionicons name={icon} size={24} className="text-light-text dark:text-dark-text" />
+      <Text className={`text-lg font-bodyMedium text-light-text dark:text-dark-text ${textStyle}`}>
+        {title}
+      </Text>
+    </View>
+
+    {showArrow && (
+      <Ionicons 
+        name="chevron-forward" 
+        size={20} 
+        className="text-light-subtext dark:text-dark-subtext" 
+      />
+    )}
+  </TouchableOpacity>
+);
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
   const router = useRouter();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { paddingTop } = useSafePadding();
 
   const handleLogout = async () => {
     try {
-      setIsLoggingOut(true);
       await logout();
-      // Redirect to login screen after logout
+      Alert.alert('Success', 'Logged out successfully');
       router.replace('/(auth)/login');
     } catch (error) {
       console.error('Logout error:', error);
-    } finally {
-      setIsLoggingOut(false);
+      Alert.alert('Error', 'Failed to logout');
     }
   };
 
@@ -32,128 +74,62 @@ export default function ProfileScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-light-background dark:bg-dark-background">
-      {/* Header */}
-      <View className="bg-light-accent dark:bg-dark-accent px-8 pt-16 pb-10 items-center rounded-b-3xl">
-        <View className="w-20 h-20 rounded-full bg-white items-center justify-center mb-4">
-          <Text className="text-3xl font-heading text-light-accent dark:text-dark-accent">
-            {user?.name ? getInitials(user.name) : 'U'}
-          </Text>
+    <View className="h-full bg-light-background dark:bg-dark-background">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerClassName="pb-32 px-7"
+      >
+        {/* Header */}
+        <View className="flex flex-row items-center justify-between" style={{ paddingTop }}>
+          <Text className="text-xl font-heading text-light-text dark:text-dark-text">Profile</Text>
+          <Ionicons name="notifications-outline" size={24} className="text-light-text dark:text-dark-text" />
         </View>
-        <Text className="text-2xl font-heading text-white mb-1">
-          {user?.name || 'User'}
-        </Text>
-        <Text className="text-sm font-body text-teal-100 dark:text-teal-200">
-          {user?.email || 'user@example.com'}
-        </Text>
-      </View>
 
-      {/* Activity Stats */}
-      <View className="px-4 pt-4">
-        <Text className="text-xl font-heading mb-4 text-light-text dark:text-dark-text">
-          My Activity
-        </Text>
-        
-        <View className="flex-row justify-between">
-          <View className="bg-light-surface dark:bg-dark-surface flex-1 p-5 rounded-xl items-center mx-1 shadow-sm">
-            <Text className="text-3xl font-heading text-light-accent dark:text-dark-accent mb-1">
-              12
-            </Text>
-            <Text className="text-xs font-body text-light-subtext dark:text-dark-subtext">
-              Saved
-            </Text>
-          </View>
+        {/* User Profile Section */}
+        <View className="flex flex-row justify-center mt-5">
+          <View className="flex flex-col items-center relative mt-5">
+            <View className="size-44 rounded-full bg-light-primary dark:bg-dark-primary items-center justify-center">
+              <Text className="text-5xl font-heading text-white">
+                {user?.name ? getInitials(user.name) : 'U'}
+              </Text>
+            </View>
+            
+            <TouchableOpacity className="absolute bottom-11 right-2 bg-light-surface dark:bg-dark-surface rounded-full p-2 shadow-lg">
+              <Ionicons name="pencil" size={20} className="text-light-primary dark:text-dark-primary" />
+            </TouchableOpacity>
 
-          <View className="bg-light-surface dark:bg-dark-surface flex-1 p-5 rounded-xl items-center mx-1 shadow-sm">
-            <Text className="text-3xl font-heading text-light-accent dark:text-dark-accent mb-1">
-              5
-            </Text>
-            <Text className="text-xs font-body text-light-subtext dark:text-dark-subtext">
-              Viewed
-            </Text>
-          </View>
-
-          <View className="bg-light-surface dark:bg-dark-surface flex-1 p-5 rounded-xl items-center mx-1 shadow-sm">
-            <Text className="text-3xl font-heading text-light-accent dark:text-dark-accent mb-1">
-              3
-            </Text>
-            <Text className="text-xs font-body text-light-subtext dark:text-dark-subtext">
-              Contacted
+            <Text className="text-2xl font-heading mt-2 text-light-text dark:text-dark-text">
+              {user?.name || 'User'}
             </Text>
           </View>
         </View>
-      </View>
 
-      {/* Settings Menu */}
-      <View className="px-4 pt-4 pb-6">
-        <Text className="text-xl font-heading mb-4 text-light-text dark:text-dark-text">
-          Settings
-        </Text>
+        {/* My Bookings & Payments Section */}
+        <View className="flex flex-col mt-10">
+          <SettingsItem icon="calendar-outline" title="My Bookings" />
+          <SettingsItem icon="wallet-outline" title="Payments" />
+        </View>
 
-        <TouchableOpacity className="bg-light-surface dark:bg-dark-surface flex-row items-center px-4 py-4 rounded-xl mb-2 shadow-sm">
-          <Text className="text-2xl mr-4">👤</Text>
-          <Text className="flex-1 text-base font-bodyMedium text-light-text dark:text-dark-text">
-            Edit Profile
-          </Text>
-          <Text className="text-2xl text-light-subtext dark:text-dark-subtext">›</Text>
-        </TouchableOpacity>
+        {/* General Settings Section */}
+        <View className="flex flex-col mt-5 border-t pt-5 border-light-subtext/20 dark:border-dark-subtext/20">
+          <SettingsItem icon="person-outline" title="Edit Profile" />
+          <SettingsItem icon="notifications-outline" title="Notifications" />
+          <SettingsItem icon="heart-outline" title="Saved Properties" />
+          <SettingsItem icon="settings-outline" title="Settings" />
+          <SettingsItem icon="help-circle-outline" title="Help & Support" />
+        </View>
 
-        <TouchableOpacity className="bg-light-surface dark:bg-dark-surface flex-row items-center px-4 py-4 rounded-xl mb-2 shadow-sm">
-          <Text className="text-2xl mr-4">🔔</Text>
-          <Text className="flex-1 text-base font-bodyMedium text-light-text dark:text-dark-text">
-            Notifications
-          </Text>
-          <Text className="text-2xl text-light-subtext dark:text-dark-subtext">›</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity className="bg-light-surface dark:bg-dark-surface flex-row items-center px-4 py-4 rounded-xl mb-2 shadow-sm">
-          <Text className="text-2xl mr-4">❤️</Text>
-          <Text className="flex-1 text-base font-bodyMedium text-light-text dark:text-dark-text">
-            Saved Properties
-          </Text>
-          <Text className="text-2xl text-light-subtext dark:text-dark-subtext">›</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity className="bg-light-surface dark:bg-dark-surface flex-row items-center px-4 py-4 rounded-xl mb-2 shadow-sm">
-          <Text className="text-2xl mr-4">⚙️</Text>
-          <Text className="flex-1 text-base font-bodyMedium text-light-text dark:text-dark-text">
-            Preferences
-          </Text>
-          <Text className="text-2xl text-light-subtext dark:text-dark-subtext">›</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity className="bg-light-surface dark:bg-dark-surface flex-row items-center px-4 py-4 rounded-xl mb-2 shadow-sm">
-          <Text className="text-2xl mr-4">ℹ️</Text>
-          <Text className="flex-1 text-base font-bodyMedium text-light-text dark:text-dark-text">
-            Help & Support
-          </Text>
-          <Text className="text-2xl text-light-subtext dark:text-dark-subtext">›</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          className="bg-light-surface dark:bg-dark-surface flex-row items-center px-4 py-4 rounded-xl mt-2 shadow-sm"
-          onPress={handleLogout}
-          disabled={isLoggingOut}
-          style={{ opacity: isLoggingOut ? 0.6 : 1 }}
-        >
-          {isLoggingOut ? (
-            <>
-              <ActivityIndicator color="#ef4444" size="small" className="mr-4" />
-              <Text className="flex-1 text-base font-bodyMedium text-red-500">
-                Logging out...
-              </Text>
-            </>
-          ) : (
-            <>
-              <Text className="text-2xl mr-4">🚪</Text>
-              <Text className="flex-1 text-base font-bodyMedium text-red-500">
-                Logout
-              </Text>
-              <Text className="text-2xl text-light-subtext dark:text-dark-subtext">›</Text>
-            </>
-          )}
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        {/* Logout Section */}
+        <View className="flex flex-col border-t mt-5 pt-5 border-light-subtext/20 dark:border-dark-subtext/20">
+          <SettingsItem
+            icon="log-out-outline"
+            title="Logout"
+            textStyle="text-red-500"
+            showArrow={false}
+            onPress={handleLogout}
+          />
+        </View>
+      </ScrollView>
+    </View>
   );
 }
