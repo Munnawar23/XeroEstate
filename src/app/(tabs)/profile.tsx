@@ -1,21 +1,50 @@
-import React from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 export default function ProfileScreen() {
+  const { user, logout } = useAuth();
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      await logout();
+      // Redirect to login screen after logout
+      router.replace('/(auth)/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
+  // Get user initials for avatar
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
   return (
     <ScrollView className="flex-1 bg-light-background dark:bg-dark-background">
       {/* Header */}
       <View className="bg-light-accent dark:bg-dark-accent px-8 pt-16 pb-10 items-center rounded-b-3xl">
         <View className="w-20 h-20 rounded-full bg-white items-center justify-center mb-4">
           <Text className="text-3xl font-heading text-light-accent dark:text-dark-accent">
-            JD
+            {user?.name ? getInitials(user.name) : 'U'}
           </Text>
         </View>
         <Text className="text-2xl font-heading text-white mb-1">
-          John Doe
+          {user?.name || 'User'}
         </Text>
         <Text className="text-sm font-body text-teal-100 dark:text-teal-200">
-          john.doe@example.com
+          {user?.email || 'user@example.com'}
         </Text>
       </View>
 
@@ -101,12 +130,28 @@ export default function ProfileScreen() {
           <Text className="text-2xl text-light-subtext dark:text-dark-subtext">›</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity className="bg-light-surface dark:bg-dark-surface flex-row items-center px-4 py-4 rounded-xl mt-2 shadow-sm">
-          <Text className="text-2xl mr-4">🚪</Text>
-          <Text className="flex-1 text-base font-bodyMedium text-red-500">
-            Logout
-          </Text>
-          <Text className="text-2xl text-light-subtext dark:text-dark-subtext">›</Text>
+        <TouchableOpacity 
+          className="bg-light-surface dark:bg-dark-surface flex-row items-center px-4 py-4 rounded-xl mt-2 shadow-sm"
+          onPress={handleLogout}
+          disabled={isLoggingOut}
+          style={{ opacity: isLoggingOut ? 0.6 : 1 }}
+        >
+          {isLoggingOut ? (
+            <>
+              <ActivityIndicator color="#ef4444" size="small" className="mr-4" />
+              <Text className="flex-1 text-base font-bodyMedium text-red-500">
+                Logging out...
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text className="text-2xl mr-4">🚪</Text>
+              <Text className="flex-1 text-base font-bodyMedium text-red-500">
+                Logout
+              </Text>
+              <Text className="text-2xl text-light-subtext dark:text-dark-subtext">›</Text>
+            </>
+          )}
         </TouchableOpacity>
       </View>
     </ScrollView>
