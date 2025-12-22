@@ -1,89 +1,153 @@
-import React from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams } from "expo-router";
+import React, { useMemo } from "react";
+import {
+  FlatList,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function HomeScreen() {
+import FeaturedCard from "@/components/common/FeaturedCard";
+import Filters from "@/components/common/Filters";
+import PropertyCard from "@/components/common/PropertyCard";
+import Search from "@/components/common/Search";
+import { featuredProperties, properties } from "@/constants/data";
+
+const Home = () => {
+  const params = useLocalSearchParams<{ query?: string; filter?: string }>();
+
+  // Filter properties based on search query and category filter
+  const filteredProperties = useMemo(() => {
+    let filtered = [...properties];
+
+    // Filter by category
+    if (params.filter && params.filter !== "All") {
+      filtered = filtered.filter(
+        (property) => property.category === params.filter
+      );
+    }
+
+    // Filter by search query
+    if (params.query) {
+      const query = params.query.toLowerCase();
+      filtered = filtered.filter(
+        (property) =>
+          property.name.toLowerCase().includes(query) ||
+          property.address.toLowerCase().includes(query)
+      );
+    }
+
+    return filtered;
+  }, [params.filter, params.query]);
+
+  const handleCardPress = (id: string) => {
+    console.log("Property clicked:", id);
+    // router.push(`/properties/${id}`);
+  };
+
   return (
-    <ScrollView className="flex-1 bg-light-background dark:bg-dark-background">
-      {/* Header */}
-      <View className="bg-light-primary dark:bg-dark-primary px-8 pt-16 pb-10 rounded-b-3xl">
-        <Text className="text-4xl font-heading text-white mb-2">🏠 XeroEstate</Text>
-        <Text className="text-base font-body text-blue-100 dark:text-blue-200">
-          Find Your Dream Property
-        </Text>
-      </View>
+    <SafeAreaView className="h-full bg-light-background dark:bg-dark-background">
+      <FlatList
+        data={filteredProperties}
+        numColumns={2}
+        renderItem={({ item }) => (
+          <PropertyCard item={item} onPress={() => handleCardPress(item.id)} />
+        )}
+        keyExtractor={(item) => item.id}
+        contentContainerClassName="pb-32"
+        columnWrapperClassName="flex gap-5 px-5"
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View className="flex-1 items-center justify-center py-10">
+            <Ionicons
+              name="home-outline"
+              size={64}
+              color="#94A3B8"
+            />
+            <Text className="text-lg font-bodyMedium text-light-subtext dark:text-dark-subtext mt-4">
+              No properties found
+            </Text>
+            <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext mt-2">
+              Try adjusting your filters
+            </Text>
+          </View>
+        }
+        ListHeaderComponent={() => (
+          <View className="px-5">
+            <View className="flex flex-row items-center justify-between mt-5">
+              <View className="flex flex-row">
+                <View className="size-12 rounded-full bg-light-primary dark:bg-dark-primary items-center justify-center">
+                  <Text className="text-xl font-heading text-white">JD</Text>
+                </View>
 
-      {/* Featured Properties Card */}
-      <View className="bg-light-surface dark:bg-dark-surface mx-4 mt-4 p-5 rounded-xl shadow-sm">
-        <Text className="text-xl font-heading mb-4 text-light-text dark:text-dark-text">
-          Featured Properties
-        </Text>
-        
-        <View className="py-3 border-b border-gray-200 dark:border-gray-700">
-          <Text className="text-lg font-bodyMedium text-light-text dark:text-dark-text mb-1">
-            Modern Villa
-          </Text>
-          <Text className="text-base font-heading text-light-primary dark:text-dark-primary mb-1">
-            $450,000
-          </Text>
-          <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext">
-            📍 Beverly Hills, CA
-          </Text>
-        </View>
+                <View className="flex flex-col items-start ml-2 justify-center">
+                  <Text className="text-xs font-body text-light-subtext dark:text-dark-subtext">
+                    Good Morning
+                  </Text>
+                  <Text className="text-base font-bodyMedium text-light-text dark:text-dark-text">
+                    John Doe
+                  </Text>
+                </View>
+              </View>
+              <TouchableOpacity>
+                <Ionicons
+                  name="notifications-outline"
+                  size={24}
+                  className="text-light-text dark:text-dark-text"
+                />
+              </TouchableOpacity>
+            </View>
 
-        <View className="py-3 border-b border-gray-200 dark:border-gray-700">
-          <Text className="text-lg font-bodyMedium text-light-text dark:text-dark-text mb-1">
-            Luxury Apartment
-          </Text>
-          <Text className="text-base font-heading text-light-primary dark:text-dark-primary mb-1">
-            $320,000
-          </Text>
-          <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext">
-            📍 Manhattan, NY
-          </Text>
-        </View>
+            <Search />
 
-        <View className="py-3">
-          <Text className="text-lg font-bodyMedium text-light-text dark:text-dark-text mb-1">
-            Beach House
-          </Text>
-          <Text className="text-base font-heading text-light-primary dark:text-dark-primary mb-1">
-            $680,000
-          </Text>
-          <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext">
-            📍 Miami Beach, FL
-          </Text>
-        </View>
-      </View>
+            <View className="my-5">
+              <View className="flex flex-row items-center justify-between">
+                <Text className="text-xl font-heading text-light-text dark:text-dark-text">
+                  Featured
+                </Text>
+                <TouchableOpacity>
+                  <Text className="text-base font-bodyMedium text-light-primary dark:text-dark-primary">
+                    See all
+                  </Text>
+                </TouchableOpacity>
+              </View>
 
-      {/* Stats */}
-      <View className="flex-row justify-around mx-4 mt-4 mb-6">
-        <View className="bg-light-surface dark:bg-dark-surface flex-1 p-5 rounded-xl items-center mx-1 shadow-sm">
-          <Text className="text-2xl font-heading text-light-primary dark:text-dark-primary mb-1">
-            1,234
-          </Text>
-          <Text className="text-xs font-body text-light-subtext dark:text-dark-subtext">
-            Properties
-          </Text>
-        </View>
+              <FlatList
+                data={featuredProperties}
+                renderItem={({ item }) => (
+                  <FeaturedCard
+                    item={item}
+                    onPress={() => handleCardPress(item.id)}
+                  />
+                )}
+                keyExtractor={(item) => item.id}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerClassName="flex gap-5 mt-5"
+              />
+            </View>
 
-        <View className="bg-light-surface dark:bg-dark-surface flex-1 p-5 rounded-xl items-center mx-1 shadow-sm">
-          <Text className="text-2xl font-heading text-light-primary dark:text-dark-primary mb-1">
-            567
-          </Text>
-          <Text className="text-xs font-body text-light-subtext dark:text-dark-subtext">
-            Agents
-          </Text>
-        </View>
+            <View className="mt-5">
+              <View className="flex flex-row items-center justify-between">
+                <Text className="text-xl font-heading text-light-text dark:text-dark-text">
+                  Our Recommendation
+                </Text>
+                <TouchableOpacity>
+                  <Text className="text-base font-bodyMedium text-light-primary dark:text-dark-primary">
+                    See all
+                  </Text>
+                </TouchableOpacity>
+              </View>
 
-        <View className="bg-light-surface dark:bg-dark-surface flex-1 p-5 rounded-xl items-center mx-1 shadow-sm">
-          <Text className="text-2xl font-heading text-light-primary dark:text-dark-primary mb-1">
-            890
-          </Text>
-          <Text className="text-xs font-body text-light-subtext dark:text-dark-subtext">
-            Sales
-          </Text>
-        </View>
-      </View>
-    </ScrollView>
+              <Filters />
+            </View>
+          </View>
+        )}
+      />
+    </SafeAreaView>
   );
-}
+};
+
+export default Home;

@@ -9,9 +9,9 @@ import {
 import "react-native-url-polyfill/auto";
 
 export const config = {
-  platform: "com.xero.estate",
-  endpoint: "https://fra.cloud.appwrite.io/v1",
-  projectId: "6941a0db001aee89ab1c",
+  platform: process.env.EXPO_PUBLIC_APPWRITE_PLATFORM || "com.xero.estate",
+  endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT || "",
+  projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID || "",
 };
 
 export const client = new Client();
