@@ -96,3 +96,16 @@ export const properties = [
     category: "Townhomes",
   },
 ];
+
+export const facilities = [
+  { title: "Parking", icon: "car-outline" },
+  { title: "Swimming Pool", icon: "water-outline" },
+  { title: "Gym", icon: "fitness-outline" },
+  { title: "Garden", icon: "leaf-outline" },
+  { title: "Security", icon: "shield-checkmark-outline" },
+  { title: "Wifi", icon: "wifi-outline" },
+  { title: "Elevator", icon: "arrow-up-outline" },
+  { title: "Balcony", icon: "home-outline" },
+  { title: "Laundry", icon: "shirt-outline" },
+  { title: "Pet Friendly", icon: "paw-outline" },
+];

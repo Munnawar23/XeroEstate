@@ -1,8 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useMemo } from "react";
 import {
+  ActivityIndicator,
   FlatList,
+  RefreshControl,
   Text,
   TouchableOpacity,
   View,
@@ -13,10 +15,13 @@ import FeaturedCard from "@/components/common/FeaturedCard";
 import Filters from "@/components/common/Filters";
 import PropertyCard from "@/components/common/PropertyCard";
 import Search from "@/components/common/Search";
-import { featuredProperties, properties } from "@/constants/data";
+import { useAuth } from "@/context/AuthContext";
+import { useProperties } from "@/hooks/useProperties";
 
 const Home = () => {
   const params = useLocalSearchParams<{ query?: string; filter?: string }>();
+  const { properties, featuredProperties, loading, error, refetch } = useProperties();
+  const { user } = useAuth();
 
   // Filter properties based on search query and category filter
   const filteredProperties = useMemo(() => {
@@ -40,12 +45,72 @@ const Home = () => {
     }
 
     return filtered;
-  }, [params.filter, params.query]);
+  }, [properties, params.filter, params.query]);
 
   const handleCardPress = (id: string) => {
-    console.log("Property clicked:", id);
-    // router.push(`/properties/${id}`);
+    router.push(`/property/${id}`);
   };
+
+  // Get user initials
+  const getUserInitials = () => {
+    if (!user?.name) return "JD";
+    const names = user.name.split(" ");
+    if (names.length >= 2) {
+      return `${names[0][0]}${names[1][0]}`.toUpperCase();
+    }
+    return user.name.substring(0, 2).toUpperCase();
+  };
+
+  // Get greeting based on time
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 18) return "Good Afternoon";
+    return "Good Evening";
+  };
+
+  // Show loading state
+  if (loading && properties.length === 0) {
+    return (
+      <SafeAreaView className="h-full bg-light-background dark:bg-dark-background">
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" className="text-light-primary dark:text-dark-primary" />
+          <Text className="text-base font-bodyMedium text-light-subtext dark:text-dark-subtext mt-4">
+            Loading properties...
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Show error state
+  if (error && properties.length === 0) {
+    return (
+      <SafeAreaView className="h-full bg-light-background dark:bg-dark-background">
+        <View className="flex-1 items-center justify-center px-5">
+          <Ionicons
+            name="alert-circle-outline"
+            size={64}
+            color="#EF4444"
+          />
+          <Text className="text-lg font-bodyMedium text-light-text dark:text-dark-text mt-4 text-center">
+            Failed to load properties
+          </Text>
+          <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext mt-2 text-center">
+            {error}
+          </Text>
+          <TouchableOpacity
+            onPress={refetch}
+            className="mt-6 bg-light-primary dark:bg-dark-primary px-6 py-3 rounded-lg"
+          >
+            <Text className="text-base font-bodyMedium text-white">
+              Try Again
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="h-full bg-light-background dark:bg-dark-background">
@@ -59,6 +124,13 @@ const Home = () => {
         contentContainerClassName="pb-32"
         columnWrapperClassName="flex gap-5 px-5"
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={refetch}
+            tintColor="#3B82F6"
+          />
+        }
         ListEmptyComponent={
           <View className="flex-1 items-center justify-center py-10">
             <Ionicons
@@ -79,15 +151,17 @@ const Home = () => {
             <View className="flex flex-row items-center justify-between mt-5">
               <View className="flex flex-row">
                 <View className="size-12 rounded-full bg-light-primary dark:bg-dark-primary items-center justify-center">
-                  <Text className="text-xl font-heading text-white">JD</Text>
+                  <Text className="text-xl font-heading text-white">
+                    {getUserInitials()}
+                  </Text>
                 </View>
 
                 <View className="flex flex-col items-start ml-2 justify-center">
                   <Text className="text-xs font-body text-light-subtext dark:text-dark-subtext">
-                    Good Morning
+                    {getGreeting()}
                   </Text>
                   <Text className="text-base font-bodyMedium text-light-text dark:text-dark-text">
-                    John Doe
+                    {user?.name || "Guest"}
                   </Text>
                 </View>
               </View>
@@ -114,19 +188,27 @@ const Home = () => {
                 </TouchableOpacity>
               </View>
 
-              <FlatList
-                data={featuredProperties}
-                renderItem={({ item }) => (
-                  <FeaturedCard
-                    item={item}
-                    onPress={() => handleCardPress(item.id)}
-                  />
-                )}
-                keyExtractor={(item) => item.id}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerClassName="flex gap-5 mt-5"
-              />
+              {featuredProperties.length > 0 ? (
+                <FlatList
+                  data={featuredProperties}
+                  renderItem={({ item }) => (
+                    <FeaturedCard
+                      item={item}
+                      onPress={() => handleCardPress(item.id)}
+                    />
+                  )}
+                  keyExtractor={(item) => item.id}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerClassName="flex gap-5 mt-5"
+                />
+              ) : (
+                <View className="py-10 items-center">
+                  <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext">
+                    No featured properties available
+                  </Text>
+                </View>
+              )}
             </View>
 
             <View className="mt-5">

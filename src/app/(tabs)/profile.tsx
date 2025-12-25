@@ -1,9 +1,11 @@
 import { useAuth } from '@/context/AuthContext';
 import { useSafePadding } from '@/hooks/useSafePadding';
+import { seedDatabase } from '@/services/seed';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   ScrollView,
   Text,
@@ -51,6 +53,7 @@ export default function ProfileScreen() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const { paddingTop } = useSafePadding();
+  const [isSeeding, setIsSeeding] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -62,6 +65,44 @@ export default function ProfileScreen() {
       Alert.alert('Error', 'Failed to logout');
     }
   };
+
+  const handleSeedDatabase = async () => {
+    Alert.alert(
+      'Seed Database',
+      'This will clear all existing data and create new sample data. Continue?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Continue',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setIsSeeding(true);
+              const result = await seedDatabase();
+              
+              if (result.success) {
+                Alert.alert('Success', result.message);
+              } else {
+                Alert.alert('Error', result.message);
+              }
+            } catch (error) {
+              console.error('Seed error:', error);
+              Alert.alert('Error', 'Failed to seed database');
+            } finally {
+              setIsSeeding(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
+
+
+ 
 
   // Get user initials for avatar
   const getInitials = (name: string) => {
@@ -117,6 +158,27 @@ export default function ProfileScreen() {
           <SettingsItem icon="heart-outline" title="Saved Properties" />
           <SettingsItem icon="settings-outline" title="Settings" />
           <SettingsItem icon="help-circle-outline" title="Help & Support" />
+        </View>
+
+        {/* Developer Tools Section */}
+        <View className="flex flex-col mt-5 border-t pt-5 border-light-subtext/20 dark:border-dark-subtext/20">
+          <Text className="text-sm font-bodyMedium text-light-subtext dark:text-dark-subtext mb-2">
+            Developer Tools
+          </Text>
+          {isSeeding ? (
+            <View className="flex flex-row items-center gap-3 py-3">
+              <ActivityIndicator size="small" color="#3B82F6" />
+              <Text className="text-lg font-bodyMedium text-light-text dark:text-dark-text">
+                Seeding database...
+              </Text>
+            </View>
+          ) : (
+            <SettingsItem
+              icon="cloud-upload-outline"
+              title="Seed Database"
+              onPress={handleSeedDatabase}
+            />
+          )}
         </View>
 
         {/* Logout Section */}

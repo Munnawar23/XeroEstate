@@ -1,3 +1,4 @@
+import { appwriteConfig } from "@/config/appwrite";
 import * as Linking from "expo-linking";
 import { openAuthSessionAsync } from "expo-web-browser";
 import {
@@ -8,17 +9,11 @@ import {
 } from "react-native-appwrite";
 import "react-native-url-polyfill/auto";
 
-export const config = {
-  platform: process.env.EXPO_PUBLIC_APPWRITE_PLATFORM || "com.xero.estate",
-  endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT || "",
-  projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID || "",
-};
-
 export const client = new Client();
 client
-  .setEndpoint(config.endpoint)
-  .setProject(config.projectId)
-  .setPlatform(config.platform);
+  .setEndpoint(appwriteConfig.endpoint)
+  .setProject(appwriteConfig.projectId)
+  .setPlatform(appwriteConfig.platform);
 
   
 export const avatar = new Avatars(client);

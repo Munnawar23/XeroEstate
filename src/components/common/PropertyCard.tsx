@@ -5,8 +5,8 @@ interface Property {
   id: string;
   name: string;
   address: string;
-  price: string;
-  rating: string;
+  price: string | number;
+  rating: string | number;
   image: string;
   category: string;
 }
