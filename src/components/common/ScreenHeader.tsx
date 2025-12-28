@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React from "react";
@@ -19,6 +20,8 @@ const ScreenHeader = ({
   const isDark = colorScheme === "dark";
 
   const handleBackPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    
     if (onBackPress) {
       onBackPress();
     } else {

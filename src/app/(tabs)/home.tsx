@@ -1,5 +1,6 @@
+import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   FlatList,
   RefreshControl,
@@ -30,6 +31,26 @@ const HomeScreen = () => {
     getUserInitials,
     getGreeting,
   } = useHome();
+
+  // Limit premium listings to 5
+  const limitedPremiumProperties = useMemo(() => {
+    return featuredProperties.slice(0, 5);
+  }, [featuredProperties]);
+
+  // Limit home properties to 8
+  const limitedHomeProperties = useMemo(() => {
+    return filteredProperties.slice(0, 8);
+  }, [filteredProperties]);
+
+  const handleSeeAllPremium = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    router.push("/category/premium" as any);
+  };
+
+  const handleSeeAllHome = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    router.push("/category/all" as any);
+  };
 
   // Show loading state
   if (loading && filteredProperties.length === 0) {
@@ -81,7 +102,7 @@ const HomeScreen = () => {
             <Text className="text-xl font-heading text-light-text dark:text-dark-text">
               Premium Listings
             </Text>
-            <TouchableOpacity onPress={() => router.push("/category/premium" as any)}>
+            <TouchableOpacity onPress={handleSeeAllPremium}>
               <Text className="text-base font-bodyMedium text-light-primary dark:text-dark-primary">
                 See all
               </Text>
@@ -89,7 +110,7 @@ const HomeScreen = () => {
           </View>
 
           <FlatList
-            data={featuredProperties}
+            data={limitedPremiumProperties}
             renderItem={({ item }) => (
               <PremiumCard
                 item={item}
@@ -116,7 +137,7 @@ const HomeScreen = () => {
             <Text className="text-xl font-heading text-light-text dark:text-dark-text">
               Find Your Home
             </Text>
-            <TouchableOpacity onPress={() => router.push("/category/all" as any)}>
+            <TouchableOpacity onPress={handleSeeAllHome}>
               <Text className="text-base font-bodyMedium text-light-primary dark:text-dark-primary">
                 See all
               </Text>
@@ -128,7 +149,7 @@ const HomeScreen = () => {
         {/* Properties Grid */}
         <View className="mt-5 pb-32">
           <FlatList
-            data={filteredProperties}
+            data={limitedHomeProperties}
             numColumns={2}
             renderItem={({ item }) => (
               <HomeCard

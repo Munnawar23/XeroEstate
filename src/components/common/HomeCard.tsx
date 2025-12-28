@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 interface Property {
@@ -27,10 +28,15 @@ export const HomeCard = ({ item, onPress }: Props) => {
     return { uri: item.image }; // fallback for URLs
   };
 
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    onPress?.();
+  };
+
   return (
     <TouchableOpacity
       className="flex-1 w-full mt-4 px-3 py-4 rounded-lg bg-light-surface dark:bg-dark-surface shadow-lg relative"
-      onPress={onPress}
+      onPress={handlePress}
     >
 
 

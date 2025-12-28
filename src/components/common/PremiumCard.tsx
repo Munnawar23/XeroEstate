@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 interface Property {
@@ -27,9 +28,14 @@ export const PremiumCard = ({ item, onPress }: Props) => {
     return { uri: item.image }; // fallback for URLs
   };
 
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    onPress?.();
+  };
+
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={handlePress}
       className="flex flex-col items-start w-60 h-80 relative"
     >
       <Image

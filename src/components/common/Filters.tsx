@@ -1,3 +1,4 @@
+import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity } from "react-native";
@@ -11,6 +12,8 @@ const Filters = () => {
   );
 
   const handleCategoryPress = (category: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    
     if (selectedCategory === category) {
       setSelectedCategory("All");
       router.setParams({ filter: "All" });
