@@ -2,15 +2,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Dimensions,
-    FlatList,
-    Image,
-    Platform,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  Image,
+  Platform,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 
@@ -230,7 +230,7 @@ const PropertyDetails = () => {
               <View className="flex flex-row flex-wrap items-start justify-start mt-3 gap-4">
                 {property.facilities.map((item: string, index: number) => {
                   const facility = facilities.find(
-                    (f) => f.title === item
+                    (f: { title: string; value: string }) => f.value === item || f.title === item
                   );
 
                   return (
@@ -240,7 +240,7 @@ const PropertyDetails = () => {
                     >
                       <View className="size-14 bg-light-primary/10 dark:bg-dark-primary/10 rounded-full flex items-center justify-center">
                         <Ionicons
-                          name={facility?.icon as any || "information-circle-outline"}
+                          name="checkmark-circle-outline"
                           size={24}
                           color="#3B82F6"
                         />
