@@ -9,13 +9,12 @@ export interface Property {
   type: string;
   description: string;
   area: number;
-  rating?: number;
+
   image?: string;
   geolocation?: string;
   facilities?: string[];
   agent?: Agent;
   gallery?: Gallery[];
-  reviews?: Review[];
   $createdAt?: string;
   $updatedAt?: string;
 }
@@ -25,17 +24,6 @@ export interface Agent {
   name: string;
   email: string;
   url?: string;
-  $createdAt?: string;
-  $updatedAt?: string;
-}
-
-export interface Review {
-  $id: string;
-  name: string;
-  avatar?: string;
-  review: string;
-  rating: number;
-  properties?: string; // relationship to property
   $createdAt?: string;
   $updatedAt?: string;
 }
@@ -53,7 +41,7 @@ export interface PropertyCardData {
   name: string;
   address: string;
   price: number;
-  rating: number;
+
   category: string;
   image: string;
   bedrooms: number;

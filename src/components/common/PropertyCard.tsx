@@ -6,7 +6,7 @@ interface Property {
   name: string;
   address: string;
   price: string | number;
-  rating: string | number;
+
   image: string;
   category: string;
 }
@@ -32,12 +32,7 @@ export const PropertyCard = ({ item, onPress }: Props) => {
       className="flex-1 w-full mt-4 px-3 py-4 rounded-lg bg-light-surface dark:bg-dark-surface shadow-lg relative"
       onPress={onPress}
     >
-      <View className="flex flex-row items-center absolute px-2 top-5 right-5 bg-white/90 dark:bg-dark-surface/90 p-1 rounded-full z-50">
-        <Ionicons name="star" size={10} color="#F59E0B" />
-        <Text className="text-xs font-bodyMedium text-light-primary dark:text-dark-primary ml-0.5">
-          {item.rating}
-        </Text>
-      </View>
+
 
       <Image
         source={getImageSource()}

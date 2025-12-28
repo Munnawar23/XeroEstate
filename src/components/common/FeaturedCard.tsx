@@ -6,7 +6,7 @@ interface Property {
   name: string;
   address: string;
   price: string | number;
-  rating: string | number;
+
   image: string;
   category: string;
 }
@@ -44,12 +44,7 @@ export const FeaturedCard = ({ item, onPress }: Props) => {
         resizeMode="cover"
       />
 
-      <View className="flex flex-row items-center bg-white/90 dark:bg-dark-surface/90 px-3 py-1.5 rounded-full absolute top-5 right-5">
-        <Ionicons name="star" size={14} color="#F59E0B" />
-        <Text className="text-xs font-bodyMedium text-light-primary dark:text-dark-primary ml-1">
-          {item.rating}
-        </Text>
-      </View>
+
 
       <View className="flex flex-col items-start absolute bottom-5 inset-x-5">
         <Text

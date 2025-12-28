@@ -1,5 +1,5 @@
 import { appwriteConfig } from "@/config/appwrite";
-import type { Agent, Gallery, Property, PropertyCardData, Review } from "@/types/property";
+import type { Agent, Gallery, Property, PropertyCardData } from "@/types/property";
 import { Databases, Query } from "react-native-appwrite";
 import { client } from "./appwrite";
 
@@ -50,20 +50,7 @@ export async function getPropertyById(propertyId: string): Promise<Property | nu
       }
     }
 
-    // Fetch reviews data if reviews ID exists
-    if (property.reviews && typeof property.reviews === 'string') {
-      try {
-        const reviewData = await databases.getDocument(
-          appwriteConfig.databaseId,
-          appwriteConfig.collections.reviews,
-          property.reviews
-        );
-        property.reviews = [reviewData as unknown as Review];
-      } catch (error) {
-        console.warn("Error fetching reviews:", error);
-        property.reviews = [];
-      }
-    }
+
 
     // Fetch gallery data if gallery IDs exist
     if (property.gallery && Array.isArray(property.gallery) && property.gallery.length > 0) {
@@ -171,23 +158,7 @@ export async function getAgents(): Promise<Agent[]> {
   }
 }
 
-/**
- * Fetch reviews for a property
- */
-export async function getReviewsForProperty(propertyId: string): Promise<Review[]> {
-  try {
-    const response = await databases.listDocuments(
-      appwriteConfig.databaseId,
-      appwriteConfig.collections.reviews,
-      [Query.equal("properties", propertyId), Query.limit(50)]
-    );
 
-    return response.documents as unknown as Review[];
-  } catch (error) {
-    console.error("Error fetching reviews:", error);
-    throw error;
-  }
-}
 
 /**
  * Fetch gallery images
@@ -216,7 +187,7 @@ export function convertToPropertyCardData(property: Property): PropertyCardData 
     name: property.name,
     address: property.address,
     price: property.price,
-    rating: property.rating || 0,
+
     category: property.type,
     image: property.image || "https://via.placeholder.com/400x300",
     bedrooms: property.bedrooms,

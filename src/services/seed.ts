@@ -26,13 +26,7 @@ export const agentImages = [
   "https://images.unsplash.com/photo-1534308143481-c55f00be8bd7?q=60&w=640&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 ];
 
-export const reviewImages = [
-  "https://images.unsplash.com/photo-1517331671191-ddc2c6d3ebd1?q=60&w=640&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1474176857210-7287d38d27c6?q=60&w=640&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1511551203524-9a24350a5771?q=60&w=640&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?q=60&w=640&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=60&w=640&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-];
+
 
 export const propertiesImages = [
   "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=60&w=640&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -66,35 +60,9 @@ const agentNames = [
   { name: "Jessica Williams", email: "jessica.williams@xeroestate.com" },
 ];
 
-const reviewerNames = [
-  "Alex Morgan", "Jordan Lee", "Taylor Swift", "Casey Johnson", "Morgan Freeman",
-  "Riley Cooper", "Jamie Fox", "Avery Brown", "Quinn Davis", "Skyler White",
-  "Cameron Blue", "Drew Barrymore", "Peyton Manning", "Dakota Fanning", "River Phoenix",
-  "Sage Green", "Phoenix Wright", "Hunter Biden", "Sawyer Tom", "Parker Lewis"
-];
 
-const reviewTexts = [
-  "Absolutely stunning property! The attention to detail is remarkable and the location couldn't be better.",
-  "Great investment opportunity. The neighborhood is developing rapidly and the property is well-maintained.",
-  "Perfect family home with spacious rooms and a beautiful backyard. Highly recommended!",
-  "Modern amenities combined with classic architecture. A true gem in the heart of the city.",
-  "Excellent value for money. The agent was professional and the entire process was smooth.",
-  "Beautiful property with amazing views. The facilities are top-notch and well-maintained.",
-  "Love the open floor plan and natural lighting. Perfect for entertaining guests.",
-  "Great location with easy access to schools, shopping, and public transportation.",
-  "The property exceeded our expectations. Every corner is thoughtfully designed.",
-  "Fantastic investment! The area is growing and the property has great potential.",
-  "Wonderful experience from start to finish. The property is exactly as described.",
-  "Impressive architecture and premium finishes throughout. Worth every penny!",
-  "Peaceful neighborhood with friendly residents. Perfect for raising a family.",
-  "The amenities are outstanding - gym, pool, and security are all excellent.",
-  "Beautiful landscaping and well-maintained common areas. A pleasure to live here.",
-  "Modern kitchen with high-end appliances. The master suite is absolutely luxurious.",
-  "Great community feel with regular events and activities. Highly recommend!",
-  "The property management is responsive and professional. No complaints whatsoever.",
-  "Stunning sunset views from the balcony. The location is simply unbeatable.",
-  "Excellent build quality and attention to detail. You can tell this was built with care."
-];
+
+
 
 const propertyNames = [
   "Sunset Villa", "Ocean View Penthouse", "Mountain Retreat", "Urban Oasis",
@@ -235,7 +203,7 @@ export async function seedDatabase() {
     // Step 1: Clear all existing data
     console.log("\n📦 Clearing existing data...");
     await clearCollection(appwriteConfig.collections.properties, "properties");
-    await clearCollection(appwriteConfig.collections.reviews, "reviews");
+
     await clearCollection(appwriteConfig.collections.galleries, "galleries");
     await clearCollection(appwriteConfig.collections.agents, "agents");
 
@@ -258,29 +226,7 @@ export async function seedDatabase() {
       await delay(200); // Small delay between creations
     }
 
-    // Step 3: Create 20 reviews
-    console.log("\n⭐ Creating reviews...");
-    const createdReviews = [];
-    for (let i = 0; i < 20; i++) {
-      const review = await databases.createDocument(
-        appwriteConfig.databaseId,
-        appwriteConfig.collections.reviews,
-        ID.unique(),
-        {
-          name: reviewerNames[i],
-          avatar: getRandomItem(reviewImages),
-          review: reviewTexts[i],
-          rating: getRandomFloat(3.5, 5.0, 1),
-        }
-      );
-      createdReviews.push(review);
-      console.log(`✓ Created review by: ${review.name}`);
-      
-      // Add delay every 5 reviews
-      if ((i + 1) % 5 === 0) {
-        await delay(300);
-      }
-    }
+
 
     // Step 4: Create gallery items
     console.log("\n🖼️  Creating gallery images...");
@@ -303,7 +249,7 @@ export async function seedDatabase() {
     console.log("\n🏠 Creating properties...");
     for (let i = 0; i < 20; i++) {
       const randomAgent = getRandomItem(createdAgents);
-      const randomReview = getRandomItem(createdReviews); // Single review instead of array
+
       const randomGalleries = getRandomItems(createdGalleries, getRandomInt(3, 8));
       const randomFacilities = getRandomItems(facilities, getRandomInt(2, 4));
 
@@ -319,14 +265,14 @@ export async function seedDatabase() {
           area: getRandomFloat(800, 5000, 0),
           bedrooms: getRandomInt(1, 6),
           bathrooms: getRandomInt(1, 4),
-          rating: getRandomFloat(3.5, 5.0, 1), // Use random rating since we only have one review
+
           image: propertiesImages[i],
           geolocation: geolocations[i],
           type: getRandomItem(propertyTypes),
           facilities: randomFacilities,
           agent: randomAgent.$id,
           gallery: randomGalleries.map(g => g.$id),
-          reviews: randomReview.$id, // Single ID instead of array
+
         }
       );
       console.log(`✓ Created property: ${property.name}`);
@@ -340,7 +286,7 @@ export async function seedDatabase() {
     console.log("\n✅ Database seeding completed successfully!");
     console.log(`\nSummary:`);
     console.log(`- Agents: 5`);
-    console.log(`- Reviews: 20`);
+
     console.log(`- Gallery Images: ${createdGalleries.length}`);
     console.log(`- Properties: 20`);
 

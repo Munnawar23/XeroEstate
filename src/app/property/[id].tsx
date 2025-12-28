@@ -13,7 +13,7 @@ import {
     View,
 } from "react-native";
 
-import Comment from "@/components/common/Comment";
+
 import { facilities } from "@/constants/data";
 import { getPropertyById } from "@/services/database";
 import type { Property } from "@/types/property";
@@ -124,7 +124,7 @@ const PropertyDetails = () => {
             {property.name}
           </Text>
 
-          {/* Type and Rating */}
+          {/* Type */}
           <View className="flex flex-row items-center gap-3 mt-2">
             <View className="flex flex-row items-center px-4 py-2 bg-light-primary/10 dark:bg-dark-primary/10 rounded-full">
               <Text className="text-xs font-bodyMedium text-light-primary dark:text-dark-primary">
@@ -132,12 +132,7 @@ const PropertyDetails = () => {
               </Text>
             </View>
 
-            <View className="flex flex-row items-center gap-1">
-              <Ionicons name="star" size={16} color="#F59E0B" />
-              <Text className="text-light-subtext dark:text-dark-subtext text-sm font-bodyMedium">
-                {property.rating || 0} ({property.reviews?.length || 0} reviews)
-              </Text>
-            </View>
+
           </View>
 
           {/* Property Stats */}
@@ -300,29 +295,7 @@ const PropertyDetails = () => {
             </View>
           </View>
 
-          {/* Reviews */}
-          {property.reviews && property.reviews.length > 0 && (
-            <View className="mt-5">
-              <View className="flex flex-row items-center justify-between">
-                <View className="flex flex-row items-center">
-                  <Ionicons name="star" size={20} color="#F59E0B" />
-                  <Text className="text-light-text dark:text-dark-text text-xl font-heading ml-2">
-                    {property.rating || 0} ({property.reviews.length} reviews)
-                  </Text>
-                </View>
 
-                <TouchableOpacity>
-                  <Text className="text-light-primary dark:text-dark-primary text-base font-bodyMedium">
-                    View All
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              <View className="mt-4">
-                <Comment item={property.reviews[0]} />
-              </View>
-            </View>
-          )}
         </View>
       </ScrollView>
 
