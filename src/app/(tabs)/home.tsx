@@ -123,7 +123,6 @@ const HomeScreen = () => {
             contentContainerClassName="flex gap-5 mt-5 px-5"
             ListEmptyComponent={
               <EmptyState
-                icon="star-outline"
                 title="No premium listings"
                 message="No premium listings available"
               />
@@ -162,7 +161,6 @@ const HomeScreen = () => {
             scrollEnabled={false}
             ListEmptyComponent={
               <EmptyState
-                icon="home-outline"
                 title="No properties found"
                 message="Try adjusting your filters"
               />

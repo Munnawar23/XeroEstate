@@ -1,8 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo } from "react";
 import {
-  ActivityIndicator,
   FlatList,
   Text,
   TouchableOpacity,
@@ -13,6 +13,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Filters from "@/components/common/Filters";
 import HomeCard from "@/components/common/HomeCard";
 import Search from "@/components/common/Search";
+import EmptyState from "@/components/layout/EmptyState";
+import ErrorState from "@/components/layout/ErrorState";
+import LoadingState from "@/components/layout/LoadingState";
 import { useProperties } from "@/hooks/useProperties";
 
 const Explore = () => {
@@ -48,8 +51,24 @@ const Explore = () => {
   }, [params.filter, params.query]);
 
   const handleCardPress = (id: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     router.push(`/property/${id}`);
   };
+
+  const handleBackPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    router.back();
+  };
+
+  // Show loading state
+  if (loading && properties.length === 0) {
+    return <LoadingState />;
+  }
+
+  // Show error state
+  if (error && properties.length === 0) {
+    return <ErrorState message={error} onRetry={refetch} />;
+  }
 
   return (
     <SafeAreaView className="h-full bg-light-background dark:bg-dark-background">
@@ -64,34 +83,16 @@ const Explore = () => {
         columnWrapperClassName="flex gap-5 px-5"
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
-          loading ? (
-            <View className="flex-1 items-center justify-center py-20">
-              <ActivityIndicator size="large" color="#3B82F6" />
-              <Text className="text-base font-bodyMedium text-light-subtext dark:text-dark-subtext mt-4">
-                Loading properties...
-              </Text>
-            </View>
-          ) : (
-            <View className="flex-1 items-center justify-center py-20">
-              <Ionicons
-                name="search-outline"
-                size={64}
-                color="#94A3B8"
-              />
-              <Text className="text-lg font-bodyMedium text-light-subtext dark:text-dark-subtext mt-4">
-                No properties found
-              </Text>
-              <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext mt-2 text-center px-10">
-                Try adjusting your search or filters
-              </Text>
-            </View>
-          )
+          <EmptyState 
+            title="No properties found"
+            message="Try adjusting your search or filters"
+          />
         }
         ListHeaderComponent={() => (
           <View className="px-5">
             <View className="flex flex-row items-center justify-between mt-5">
               <TouchableOpacity
-                onPress={() => router.back()}
+                onPress={handleBackPress}
                 className="flex flex-row bg-light-surface dark:bg-dark-surface rounded-full size-11 items-center justify-center shadow-sm"
               >
                 <Ionicons
@@ -105,7 +106,7 @@ const Explore = () => {
                 Search for Your Ideal Home
               </Text>
 
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}>
                 <Ionicons
                   name="notifications-outline"
                   size={24}

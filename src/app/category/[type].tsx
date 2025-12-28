@@ -98,7 +98,6 @@ const CategoryScreen = () => {
         }
         ListEmptyComponent={
           <EmptyState
-            icon="home-outline"
             title="No properties found"
             message={
               type === "premium"
