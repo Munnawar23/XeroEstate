@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React from "react";
 import {
   FlatList,
@@ -13,7 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Filters from "@/components/common/Filters";
 import HomeCard from "@/components/common/HomeCard";
 import PremiumCard from "@/components/common/PremiumCard";
-import Search from "@/components/common/Search";
+import EmptyState from "@/components/layout/EmptyState";
 import ErrorState from "@/components/layout/ErrorState";
 import LoadingState from "@/components/layout/LoadingState";
 import { useHome } from "@/hooks/useHome";
@@ -75,24 +75,18 @@ const HomeScreen = () => {
           </View>
         </View>
 
-        {/* Search Section */}
-        <View className="px-5">
-          <Search />
-        </View>
-
         {/* Premium Listings Section */}
         <View className="my-5">
           <View className="flex flex-row items-center justify-between px-5">
             <Text className="text-xl font-heading text-light-text dark:text-dark-text">
               Premium Listings
             </Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push("/category/premium" as any)}>
               <Text className="text-base font-bodyMedium text-light-primary dark:text-dark-primary">
                 See all
               </Text>
             </TouchableOpacity>
           </View>
-
 
           <FlatList
             data={featuredProperties}
@@ -107,11 +101,11 @@ const HomeScreen = () => {
             showsHorizontalScrollIndicator={false}
             contentContainerClassName="flex gap-5 mt-5 px-5"
             ListEmptyComponent={
-              <View className="py-10 items-center w-full">
-                <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext">
-                  No premium listings available
-                </Text>
-              </View>
+              <EmptyState
+                icon="star-outline"
+                title="No premium listings"
+                message="No premium listings available"
+              />
             }
           />
         </View>
@@ -122,7 +116,7 @@ const HomeScreen = () => {
             <Text className="text-xl font-heading text-light-text dark:text-dark-text">
               Find Your Home
             </Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push("/category/all" as any)}>
               <Text className="text-base font-bodyMedium text-light-primary dark:text-dark-primary">
                 See all
               </Text>
@@ -146,19 +140,11 @@ const HomeScreen = () => {
             columnWrapperClassName="flex gap-5 px-5"
             scrollEnabled={false}
             ListEmptyComponent={
-              <View className="flex-1 items-center justify-center py-10">
-                <Ionicons
-                  name="home-outline"
-                  size={64}
-                  color="#94A3B8"
-                />
-                <Text className="text-lg font-bodyMedium text-light-subtext dark:text-dark-subtext mt-4">
-                  No properties found
-                </Text>
-                <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext mt-2">
-                  Try adjusting your filters
-                </Text>
-              </View>
+              <EmptyState
+                icon="home-outline"
+                title="No properties found"
+                message="Try adjusting your filters"
+              />
             }
           />
         </View>
