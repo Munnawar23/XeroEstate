@@ -5,24 +5,24 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Light Theme (Real Estate – Minimal)
+        // Light Theme (unchanged)
         light: {
-          background: "#FAFAFA",   // warm clean white
-          surface: "#FFFFFF",     // cards / sheets
-          text: "#0F172A",        // deep slate
-          subtext: "#64748B",     // soft gray
-          primary: "#1E40AF",     // trust blue
-          accent: "#0F766E",      // muted teal
+          background: "#FAFAFA",
+          surface: "#FFFFFF",
+          text: "#0F172A",
+          subtext: "#64748B",
+          primary: "#1E40AF",
+          accent: "#0F766E",
         },
 
-        // Dark Theme (Luxury)
+        // Dark Theme (Grey Luxury)
         dark: {
-          background: "#020617",  // near-black navy
-          surface: "#0F172A",     // cards
-          text: "#F8FAFC",
-          subtext: "#94A3B8",
-          primary: "#3B82F6",
-          accent: "#2DD4BF",
+          background: "#0B0B0C",  // deep charcoal
+          surface: "#171717",     // card background
+          text: "#F5F5F5",        // off-white
+          subtext: "#A1A1AA",     // neutral grey
+          primary: "#737373",     // elegant grey (replaces blue)
+          accent: "#D4D4D8",      // soft silver highlight
         },
       },
 

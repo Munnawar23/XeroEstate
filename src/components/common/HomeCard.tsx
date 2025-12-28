@@ -16,7 +16,7 @@ interface Props {
   onPress?: () => void;
 }
 
-export const FeaturedCard = ({ item, onPress }: Props) => {
+export const HomeCard = ({ item, onPress }: Props) => {
   // Helper to get image source - handles both require() and string paths
   const getImageSource = () => {
     if (item.image.includes('japan.png')) {
@@ -29,40 +29,31 @@ export const FeaturedCard = ({ item, onPress }: Props) => {
 
   return (
     <TouchableOpacity
+      className="flex-1 w-full mt-4 px-3 py-4 rounded-lg bg-light-surface dark:bg-dark-surface shadow-lg relative"
       onPress={onPress}
-      className="flex flex-col items-start w-60 h-80 relative"
     >
+
+
       <Image
         source={getImageSource()}
-        className="size-full rounded-2xl"
+        className="w-full h-40 rounded-lg"
         resizeMode="cover"
       />
 
-      <Image
-        source={require("@/assets/images/card-background.webp")}
-        className="size-full rounded-2xl absolute bottom-0"
-        resizeMode="cover"
-      />
-
-
-
-      <View className="flex flex-col items-start absolute bottom-5 inset-x-5">
-        <Text
-          className="text-xl font-heading text-white"
-          numberOfLines={1}
-        >
+      <View className="flex flex-col mt-2">
+        <Text className="text-base font-bodyMedium text-light-text dark:text-dark-text">
           {item.name}
         </Text>
-        <Text className="text-base font-body text-white/90" numberOfLines={1}>
+        <Text className="text-xs font-body text-light-subtext dark:text-dark-subtext">
           {item.address}
         </Text>
 
-        <View className="flex flex-row items-center justify-between w-full mt-2">
-          <Text className="text-xl font-heading text-white">
+        <View className="flex flex-row items-center justify-between mt-2">
+          <Text className="text-base font-heading text-light-primary dark:text-dark-primary">
             ${item.price}
           </Text>
           <TouchableOpacity>
-            <Ionicons name="heart-outline" size={20} color="#FFFFFF" />
+            <Ionicons name="heart-outline" size={20} color="#64748B" />
           </TouchableOpacity>
         </View>
       </View>
@@ -70,4 +61,4 @@ export const FeaturedCard = ({ item, onPress }: Props) => {
   );
 };
 
-export default FeaturedCard;
+export default HomeCard;

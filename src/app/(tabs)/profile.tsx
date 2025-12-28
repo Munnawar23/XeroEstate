@@ -1,5 +1,4 @@
 import { useAuth } from '@/context/AuthContext';
-import { useSafePadding } from '@/hooks/useSafePadding';
 import { seedDatabase } from '@/services/seed';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -12,6 +11,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface SettingsItemProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -52,7 +52,6 @@ const SettingsItem = ({
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
   const router = useRouter();
-  const { paddingTop } = useSafePadding();
   const [isSeeding, setIsSeeding] = useState(false);
 
   const handleLogout = async () => {
@@ -115,13 +114,13 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View className="h-full bg-light-background dark:bg-dark-background">
+    <SafeAreaView className="h-full bg-light-background dark:bg-dark-background">
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerClassName="pb-32 px-7"
       >
         {/* Header */}
-        <View className="flex flex-row items-center justify-between" style={{ paddingTop }}>
+        <View className="flex flex-row items-center justify-between">
           <Text className="text-xl font-heading text-light-text dark:text-dark-text">Profile</Text>
           <Ionicons name="notifications-outline" size={24} className="text-light-text dark:text-dark-text" />
         </View>
@@ -192,6 +191,6 @@ export default function ProfileScreen() {
           />
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }

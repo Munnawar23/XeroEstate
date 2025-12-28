@@ -1,128 +1,49 @@
 import { Ionicons } from "@expo/vector-icons";
-import { router, useLocalSearchParams } from "expo-router";
-import React, { useMemo } from "react";
+import React from "react";
 import {
-  ActivityIndicator,
   FlatList,
   RefreshControl,
+  ScrollView,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import FeaturedCard from "@/components/common/FeaturedCard";
 import Filters from "@/components/common/Filters";
-import PropertyCard from "@/components/common/PropertyCard";
+import HomeCard from "@/components/common/HomeCard";
+import PremiumCard from "@/components/common/PremiumCard";
 import Search from "@/components/common/Search";
-import { useAuth } from "@/context/AuthContext";
-import { useProperties } from "@/hooks/useProperties";
+import ErrorState from "@/components/layout/ErrorState";
+import LoadingState from "@/components/layout/LoadingState";
+import { useHome } from "@/hooks/useHome";
 
-const Home = () => {
-  const params = useLocalSearchParams<{ query?: string; filter?: string }>();
-  const { properties, featuredProperties, loading, error, refetch } = useProperties();
-  const { user } = useAuth();
-
-  // Filter properties based on search query and category filter
-  const filteredProperties = useMemo(() => {
-    let filtered = [...properties];
-
-    // Filter by category
-    if (params.filter && params.filter !== "All") {
-      filtered = filtered.filter(
-        (property) => property.category === params.filter
-      );
-    }
-
-    // Filter by search query
-    if (params.query) {
-      const query = params.query.toLowerCase();
-      filtered = filtered.filter(
-        (property) =>
-          property.name.toLowerCase().includes(query) ||
-          property.address.toLowerCase().includes(query)
-      );
-    }
-
-    return filtered;
-  }, [properties, params.filter, params.query]);
-
-  const handleCardPress = (id: string) => {
-    router.push(`/property/${id}`);
-  };
-
-  // Get user initials
-  const getUserInitials = () => {
-    if (!user?.name) return "JD";
-    const names = user.name.split(" ");
-    if (names.length >= 2) {
-      return `${names[0][0]}${names[1][0]}`.toUpperCase();
-    }
-    return user.name.substring(0, 2).toUpperCase();
-  };
-
-  // Get greeting based on time
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good Morning";
-    if (hour < 18) return "Good Afternoon";
-    return "Good Evening";
-  };
+const HomeScreen = () => {
+  const {
+    filteredProperties,
+    featuredProperties,
+    loading,
+    error,
+    user,
+    refetch,
+    handleCardPress,
+    getUserInitials,
+    getGreeting,
+  } = useHome();
 
   // Show loading state
-  if (loading && properties.length === 0) {
-    return (
-      <SafeAreaView className="h-full bg-light-background dark:bg-dark-background">
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" className="text-light-primary dark:text-dark-primary" />
-          <Text className="text-base font-bodyMedium text-light-subtext dark:text-dark-subtext mt-4">
-            Loading properties...
-          </Text>
-        </View>
-      </SafeAreaView>
-    );
+  if (loading && filteredProperties.length === 0) {
+    return <LoadingState />;
   }
 
   // Show error state
-  if (error && properties.length === 0) {
-    return (
-      <SafeAreaView className="h-full bg-light-background dark:bg-dark-background">
-        <View className="flex-1 items-center justify-center px-5">
-          <Ionicons
-            name="alert-circle-outline"
-            size={64}
-            color="#EF4444"
-          />
-          <Text className="text-lg font-bodyMedium text-light-text dark:text-dark-text mt-4 text-center">
-            Failed to load properties
-          </Text>
-          <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext mt-2 text-center">
-            {error}
-          </Text>
-          <TouchableOpacity
-            onPress={refetch}
-            className="mt-6 bg-light-primary dark:bg-dark-primary px-6 py-3 rounded-lg"
-          >
-            <Text className="text-base font-bodyMedium text-white">
-              Try Again
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    );
+  if (error && filteredProperties.length === 0) {
+    return <ErrorState message={error} onRetry={refetch} />;
   }
 
   return (
     <SafeAreaView className="h-full bg-light-background dark:bg-dark-background">
-      <FlatList
-        data={filteredProperties}
-        numColumns={2}
-        renderItem={({ item }) => (
-          <PropertyCard item={item} onPress={() => handleCardPress(item.id)} />
-        )}
-        keyExtractor={(item) => item.id}
-        contentContainerClassName="pb-32"
-        columnWrapperClassName="flex gap-5 px-5"
+      <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -131,105 +52,119 @@ const Home = () => {
             tintColor="#3B82F6"
           />
         }
-        ListEmptyComponent={
-          <View className="flex-1 items-center justify-center py-10">
-            <Ionicons
-              name="home-outline"
-              size={64}
-              color="#94A3B8"
-            />
-            <Text className="text-lg font-bodyMedium text-light-subtext dark:text-dark-subtext mt-4">
-              No properties found
-            </Text>
-            <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext mt-2">
-              Try adjusting your filters
-            </Text>
-          </View>
-        }
-        ListHeaderComponent={() => (
-          <View className="px-5">
-            <View className="flex flex-row items-center justify-between mt-5">
-              <View className="flex flex-row">
-                <View className="size-12 rounded-full bg-light-primary dark:bg-dark-primary items-center justify-center">
-                  <Text className="text-xl font-heading text-white">
-                    {getUserInitials()}
-                  </Text>
-                </View>
-
-                <View className="flex flex-col items-start ml-2 justify-center">
-                  <Text className="text-xs font-body text-light-subtext dark:text-dark-subtext">
-                    {getGreeting()}
-                  </Text>
-                  <Text className="text-base font-bodyMedium text-light-text dark:text-dark-text">
-                    {user?.name || "Guest"}
-                  </Text>
-                </View>
+      >
+        {/* Header Section */}
+        <View className="px-5 mt-5">
+          <View className="flex flex-row items-center justify-between">
+            <View className="flex flex-row">
+              <View className="size-12 rounded-full bg-light-primary dark:bg-dark-primary items-center justify-center">
+                <Text className="text-xl font-heading text-white">
+                  {getUserInitials()}
+                </Text>
               </View>
-              <TouchableOpacity>
+
+              <View className="flex flex-col items-start ml-2 justify-center">
+                <Text className="text-xs font-body text-light-subtext dark:text-dark-subtext">
+                  {getGreeting()}
+                </Text>
+                <Text className="text-base font-bodyMedium text-light-text dark:text-dark-text">
+                  {user?.name || "Guest"}
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Search Section */}
+        <View className="px-5">
+          <Search />
+        </View>
+
+        {/* Premium Listings Section */}
+        <View className="my-5">
+          <View className="flex flex-row items-center justify-between px-5">
+            <Text className="text-xl font-heading text-light-text dark:text-dark-text">
+              Premium Listings
+            </Text>
+            <TouchableOpacity>
+              <Text className="text-base font-bodyMedium text-light-primary dark:text-dark-primary">
+                See all
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+
+          <FlatList
+            data={featuredProperties}
+            renderItem={({ item }) => (
+              <PremiumCard
+                item={item}
+                onPress={() => handleCardPress(item.id)}
+              />
+            )}
+            keyExtractor={(item) => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerClassName="flex gap-5 mt-5 px-5"
+            ListEmptyComponent={
+              <View className="py-10 items-center w-full">
+                <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext">
+                  No premium listings available
+                </Text>
+              </View>
+            }
+          />
+        </View>
+
+        {/* Find Your Home Section */}
+        <View className="mt-5 px-5">
+          <View className="flex flex-row items-center justify-between">
+            <Text className="text-xl font-heading text-light-text dark:text-dark-text">
+              Find Your Home
+            </Text>
+            <TouchableOpacity>
+              <Text className="text-base font-bodyMedium text-light-primary dark:text-dark-primary">
+                See all
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <Filters />
+        </View>
+
+        {/* Properties Grid */}
+        <View className="mt-5 pb-32">
+          <FlatList
+            data={filteredProperties}
+            numColumns={2}
+            renderItem={({ item }) => (
+              <HomeCard
+                item={item}
+                onPress={() => handleCardPress(item.id)}
+              />
+            )}
+            keyExtractor={(item) => item.id}
+            columnWrapperClassName="flex gap-5 px-5"
+            scrollEnabled={false}
+            ListEmptyComponent={
+              <View className="flex-1 items-center justify-center py-10">
                 <Ionicons
-                  name="notifications-outline"
-                  size={24}
-                  className="text-light-text dark:text-dark-text"
+                  name="home-outline"
+                  size={64}
+                  color="#94A3B8"
                 />
-              </TouchableOpacity>
-            </View>
-
-            <Search />
-
-            <View className="my-5">
-              <View className="flex flex-row items-center justify-between">
-                <Text className="text-xl font-heading text-light-text dark:text-dark-text">
-                  Featured
+                <Text className="text-lg font-bodyMedium text-light-subtext dark:text-dark-subtext mt-4">
+                  No properties found
                 </Text>
-                <TouchableOpacity>
-                  <Text className="text-base font-bodyMedium text-light-primary dark:text-dark-primary">
-                    See all
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              {featuredProperties.length > 0 ? (
-                <FlatList
-                  data={featuredProperties}
-                  renderItem={({ item }) => (
-                    <FeaturedCard
-                      item={item}
-                      onPress={() => handleCardPress(item.id)}
-                    />
-                  )}
-                  keyExtractor={(item) => item.id}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerClassName="flex gap-5 mt-5"
-                />
-              ) : (
-                <View className="py-10 items-center">
-                  <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext">
-                    No featured properties available
-                  </Text>
-                </View>
-              )}
-            </View>
-
-            <View className="mt-5">
-              <View className="flex flex-row items-center justify-between">
-                <Text className="text-xl font-heading text-light-text dark:text-dark-text">
-                  Our Recommendation
+                <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext mt-2">
+                  Try adjusting your filters
                 </Text>
-                <TouchableOpacity>
-                  <Text className="text-base font-bodyMedium text-light-primary dark:text-dark-primary">
-                    See all
-                  </Text>
-                </TouchableOpacity>
               </View>
-
-              <Filters />
-            </View>
-          </View>
-        )}
-      />
+            }
+          />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default Home;
+export default HomeScreen;

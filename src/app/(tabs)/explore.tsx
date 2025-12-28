@@ -2,16 +2,16 @@ import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo } from "react";
 import {
-    ActivityIndicator,
-    FlatList,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Filters from "@/components/common/Filters";
-import PropertyCard from "@/components/common/PropertyCard";
+import HomeCard from "@/components/common/HomeCard";
 import Search from "@/components/common/Search";
 import { useProperties } from "@/hooks/useProperties";
 
@@ -57,7 +57,7 @@ const Explore = () => {
         data={filteredProperties}
         numColumns={2}
         renderItem={({ item }) => (
-          <PropertyCard item={item} onPress={() => handleCardPress(item.id)} />
+          <HomeCard item={item} onPress={() => handleCardPress(item.id)} />
         )}
         keyExtractor={(item) => item.id}
         contentContainerClassName="pb-32"

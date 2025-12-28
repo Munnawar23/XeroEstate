@@ -1,12 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
+import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
-import { TextInput, TouchableOpacity, View } from "react-native";
+import { TextInput, View } from "react-native";
 import { useDebouncedCallback } from "use-debounce";
 
 const Search = () => {
   const params = useLocalSearchParams<{ query?: string }>();
   const [search, setSearch] = useState(params.query);
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   const debouncedSearch = useDebouncedCallback((text: string) => {
     router.setParams({ query: text });
@@ -23,24 +26,16 @@ const Search = () => {
         <Ionicons 
           name="search" 
           size={20} 
-          className="text-light-subtext dark:text-dark-subtext" 
+          color={isDark ? "#A1A1AA" : "#64748B"}
         />
         <TextInput
           value={search}
           onChangeText={handleSearch}
           placeholder="Search for properties..."
-          placeholderTextColor="#94A3B8"
+          placeholderTextColor={isDark ? "#71717A" : "#94A3B8"}
           className="text-base font-body text-light-text dark:text-dark-text ml-3 flex-1"
         />
       </View>
-
-      <TouchableOpacity>
-        <Ionicons 
-          name="options-outline" 
-          size={20} 
-          className="text-light-subtext dark:text-dark-subtext" 
-        />
-      </TouchableOpacity>
     </View>
   );
 };

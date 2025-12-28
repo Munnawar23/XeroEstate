@@ -1,6 +1,6 @@
 import { useAuth } from '@/context/AuthContext';
 import { hp, wp } from '@/helpers/common';
-import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
@@ -12,6 +12,7 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     try {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
       setIsLoggingIn(true);
       const success = await login();
       if (success) {
@@ -40,11 +41,14 @@ export default function LoginScreen() {
         </View>
 
         {/* Content - Bottom Half */}
-        <View className="px-8 pb-12 pt-8 bg-light-background dark:bg-dark-background">
+        <View className="px-8 pb-12 pt-8 bg-light-background dark:bg-dark-background rounded-t-3xl -mt-8">
           {/* Welcome Text */}
-          <View className="mb-8">
-            <Text className="text-md font-body text-light-subtext dark:text-dark-subtext text-center mb-2 uppercase tracking-wider">
-              WELCOME TO XeroEstate
+          <View className="mb-4">
+            <Text className="text-sm font-bodyBold text-light-subtext dark:text-dark-subtext text-center mb-2 uppercase tracking-widest">
+              WELCOME TO{' '}
+              <Text className="text-light-primary dark:text-dark-primary font-headingBold">
+                XeroEstate
+              </Text>
             </Text>
             <Text className="text-2xl font-heading text-center text-light-text dark:text-dark-text">
               Let's Get You Closer to{'\n'}
@@ -55,7 +59,7 @@ export default function LoginScreen() {
           </View>
 
           {/* Login Info */}
-          <Text className="text-sm font-body text-center text-light-subtext dark:text-dark-subtext mb-6">
+          <Text className="text-md font-body text-center text-light-subtext dark:text-dark-subtext mb-6">
             Login to XeroEstate with Google
           </Text>
 
@@ -74,8 +78,12 @@ export default function LoginScreen() {
               <ActivityIndicator color="#DB4437" />
             ) : (
               <>
-                <Ionicons name="logo-google" size={wp(5)} color="#DB4437" />
-                <Text className="ml-3 text-base font-bodyMedium text-light-text dark:text-dark-text">
+                <Image 
+                  source={require('../../assets/icons/google.webp')} 
+                  style={{ width: wp(5), height: wp(5) }}
+                  resizeMode="contain"
+                />
+                <Text className="ml-3 text-lg font-bodyMedium text-light-text dark:text-dark-text">
                   Continue with Google
                 </Text>
               </>

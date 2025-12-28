@@ -23,25 +23,18 @@ export default function Index() {
         console.warn(e);
       }
     }
-
     prepare();
   }, []);
 
-  // Handle navigation after auth state is loaded
   useEffect(() => {
     if (!appIsReady || loading) return;
-
-    // Wait for animation to play (3 seconds)
     const timer = setTimeout(() => {
       if (user) {
-        // User is logged in, go to tabs
         router.replace("/(tabs)/home");
       } else {
-        // User is not logged in, go to login
         router.replace("/(auth)/login");
       }
     }, 3000);
-
     return () => clearTimeout(timer);
   }, [appIsReady, loading, user, router]);
 
