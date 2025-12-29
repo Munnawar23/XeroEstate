@@ -18,14 +18,9 @@ interface Props {
 }
 
 export const PremiumCard = ({ item, onPress }: Props) => {
-  // Helper to get image source - handles both require() and string paths
+  // Helper to get image source
   const getImageSource = () => {
-    if (item.image.includes('japan.png')) {
-      return require('@/assets/images/japan.png');
-    } else if (item.image.includes('new-york.png')) {
-      return require('@/assets/images/new-york.png');
-    }
-    return { uri: item.image }; // fallback for URLs
+    return { uri: item.image };
   };
 
   const handlePress = () => {

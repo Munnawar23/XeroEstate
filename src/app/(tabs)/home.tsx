@@ -146,7 +146,7 @@ const HomeScreen = () => {
         </View>
 
         {/* Properties Grid */}
-        <View className="mt-5 pb-32">
+        <View className="mt-5 pb-5">
           <FlatList
             data={limitedHomeProperties}
             numColumns={2}
@@ -166,6 +166,28 @@ const HomeScreen = () => {
               />
             }
           />
+        </View>
+
+        {/* Footer */}
+        <View className="mt-10 mb-8 px-5">
+          <View className="w-full h-px bg-light-subtext/20 dark:bg-dark-subtext/20 mb-6" />
+          
+          <View className="items-center">
+            <View className="flex-row items-center">
+              <Text className="text-2xl font-heading text-light-text dark:text-dark-text text-center">
+                Xero
+              </Text>
+              <Text className="text-2xl font-heading text-light-primary dark:text-dark-primary text-center">
+                Estate
+              </Text>
+            </View>
+            <Text className="text-base font-body text-light-subtext dark:text-dark-subtext text-center mt-3 max-w-xs">
+              Your trusted platform for buying and selling premium properties
+            </Text>
+            <Text className="text-md font-bodyMedium text-light-subtext dark:text-dark-subtext text-center mt-4">
+              Version 1.0.0
+            </Text>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
