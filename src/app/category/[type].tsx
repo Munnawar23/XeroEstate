@@ -124,9 +124,6 @@ const CategoryScreen = () => {
               <Text className="text-base font-bodyMedium text-light-text dark:text-dark-text mt-3">
                 That's all for now!
               </Text>
-              <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext mt-1">
-                You've seen all {categoryProperties.length} properties
-              </Text>
             </View>
           ) : null
         }
