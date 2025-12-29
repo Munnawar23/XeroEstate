@@ -122,7 +122,7 @@ const CategoryScreen = () => {
                 Loading more...
               </Text>
             </View>
-          ) : !hasMore && paginatedProperties.length > 0 ? (
+          ) : !hasMore && paginatedProperties.length > 0 && type !== 'favorites' ? (
             <View className="py-8 px-5 items-center">
               <Ionicons 
                 name="checkmark-circle" 

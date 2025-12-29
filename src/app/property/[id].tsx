@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -7,18 +6,17 @@ import {
   Dimensions,
   FlatList,
   Image,
+  Linking,
   Platform,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import Toast from "react-native-toast-message";
 
 
 
 import { facilities } from "@/constants/data";
-import { useFavorites } from "@/context/FavoritesContext";
 import { getPropertyById } from "@/services/database";
 import type { Property } from "@/types/property";
 
@@ -26,37 +24,7 @@ const PropertyDetails = () => {
   const { id } = useLocalSearchParams<{ id?: string }>();
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
-  
-  const { isFavorite, toggleFavorite } = useFavorites();
-  const favorite = property ? isFavorite(property.$id) : false;
-
   const windowHeight = Dimensions.get("window").height;
-
-  const handleFavoriteToggle = () => {
-    if (!property) return;
-    
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    
-    // Convert Appwrite property to Favorite property structure
-    const favoriteProp = {
-      id: property.$id,
-      name: property.name,
-      address: property.address,
-      price: property.price,
-      image: property.image || "",
-      category: property.type,
-    };
-    
-    toggleFavorite(favoriteProp);
-    
-    Toast.show({
-      type: 'success',
-      text1: !favorite ? 'Added to favorites!' : 'Removed from favorites',
-      text2: !favorite ? '❤️ Property saved' : '💔 Property removed',
-      position: 'top',
-      visibilityTime: 2000,
-    });
-  };
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -113,7 +81,7 @@ const PropertyDetails = () => {
         {/* Property Image */}
         <View className="relative w-full" style={{ height: windowHeight / 2 }}>
           <Image
-            source={{ uri: property.image || "https://via.placeholder.com/800x600" }}
+            source={{ uri: property.image }}
             className="size-full"
             resizeMode="cover"
           />
@@ -137,22 +105,8 @@ const PropertyDetails = () => {
             </TouchableOpacity>
 
             <View className="flex flex-row items-center gap-3">
-              <TouchableOpacity 
-                onPress={handleFavoriteToggle}
-                className="bg-light-surface/90 dark:bg-dark-surface/90 rounded-full size-11 items-center justify-center"
-              >
-                <Ionicons 
-                  name={favorite ? "heart" : "heart-outline"} 
-                  size={24} 
-                  color="#EF4444" 
-                />
-              </TouchableOpacity>
               <TouchableOpacity className="bg-light-surface/90 dark:bg-dark-surface/90 rounded-full size-11 items-center justify-center">
-                <Ionicons
-                  name="share-outline"
-                  size={20}
-                  className="text-light-text dark:text-dark-text"
-                />
+                <Ionicons name="heart-outline" size={24} color="#EF4444" />
               </TouchableOpacity>
             </View>
           </View>
@@ -167,13 +121,11 @@ const PropertyDetails = () => {
 
           {/* Type */}
           <View className="flex flex-row items-center gap-3 mt-2">
-            <View className="flex flex-row items-center px-4 py-2 bg-light-primary/10 dark:bg-dark-primary/10 rounded-full">
-              <Text className="text-xs font-bodyMedium text-light-primary dark:text-dark-primary">
+            <View className="flex flex-row items-center px-5 py-2 bg-light-primary/15 dark:bg-dark-primary/15 rounded-full">
+              <Text className="text-sm font-heading text-light-primary dark:text-dark-primary uppercase tracking-wider">
                 {property.type}
               </Text>
             </View>
-
-
           </View>
 
           {/* Property Stats */}
@@ -232,14 +184,10 @@ const PropertyDetails = () => {
                 </View>
 
                 <View className="flex flex-row items-center gap-3">
-                  <TouchableOpacity className="bg-light-surface dark:bg-dark-surface rounded-full size-10 items-center justify-center">
-                    <Ionicons
-                      name="chatbubble-outline"
-                      size={20}
-                      className="text-light-primary dark:text-dark-primary"
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity className="bg-light-surface dark:bg-dark-surface rounded-full size-10 items-center justify-center">
+                  <TouchableOpacity 
+                    onPress={() => Linking.openURL("tel:0000000000")}
+                    className="bg-light-surface dark:bg-dark-surface rounded-full size-10 items-center justify-center"
+                  >
                     <Ionicons
                       name="call-outline"
                       size={20}

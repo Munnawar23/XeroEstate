@@ -1,12 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
-    FlatList,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
@@ -19,9 +20,13 @@ import ErrorState from "@/components/layout/ErrorState";
 import LoadingState from "@/components/layout/LoadingState";
 import { useProperties } from "@/hooks/useProperties";
 
+const ITEMS_PER_PAGE = 8;
+
 const Explore = () => {
   const params = useLocalSearchParams<{ query?: string; filter?: string }>();
   const { properties, loading, error, refetch } = useProperties();
+  const [page, setPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   // Filter properties based on search query and category filter
   const filteredProperties = useMemo(() => {
@@ -47,7 +52,26 @@ const Explore = () => {
     return filtered;
   }, [properties, params.filter, params.query]);
 
+  // Paginated properties
+  const paginatedProperties = useMemo(() => {
+    return filteredProperties.slice(0, page * ITEMS_PER_PAGE);
+  }, [filteredProperties, page]);
+
+  const hasMore = paginatedProperties.length < filteredProperties.length;
+
+  const handleLoadMore = () => {
+    if (hasMore && !loadingMore) {
+      setLoadingMore(true);
+      // Simulate loading delay for better UX
+      setTimeout(() => {
+        setPage((prev) => prev + 1);
+        setLoadingMore(false);
+      }, 500);
+    }
+  };
+
   useEffect(() => {
+    setPage(1); // Reset page when filters change
     refetch();
   }, [params.filter, params.query]);
 
@@ -84,7 +108,7 @@ const Explore = () => {
   return (
     <SafeAreaView className="h-full bg-light-background dark:bg-dark-background">
       <FlatList
-        data={filteredProperties}
+        data={paginatedProperties}
         numColumns={2}
         renderItem={({ item }) => (
           <HomeCard 
@@ -97,6 +121,29 @@ const Explore = () => {
         contentContainerClassName="pb-32"
         columnWrapperClassName="flex gap-5 px-5"
         showsVerticalScrollIndicator={false}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          loadingMore && hasMore ? (
+            <View className="py-6 items-center">
+              <ActivityIndicator size="large" color="#3B82F6" />
+              <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext mt-2">
+                Loading more...
+              </Text>
+            </View>
+          ) : !hasMore && paginatedProperties.length > 0 ? (
+            <View className="py-8 px-5 items-center">
+              <Ionicons 
+                name="checkmark-circle" 
+                size={48} 
+                color="#10B981" 
+              />
+              <Text className="text-base font-bodyMedium text-light-text dark:text-dark-text mt-3">
+                That's all for now!
+              </Text>
+            </View>
+          ) : null
+        }
         ListEmptyComponent={
           <EmptyState 
             title="No properties found"
@@ -105,7 +152,7 @@ const Explore = () => {
         }
         ListHeaderComponent={() => (
           <View className="px-5">
-            <View className="flex flex-row items-center justify-between mt-5">
+            <View className="flex flex-row items-center justify-normal mt-5 gap-3">
               <TouchableOpacity
                 onPress={handleBackPress}
                 className="flex flex-row bg-light-surface dark:bg-dark-surface rounded-full size-11 items-center justify-center shadow-sm"
@@ -120,14 +167,6 @@ const Explore = () => {
               <Text className="text-base text-center font-heading text-light-text dark:text-dark-text">
                 Search for Your Ideal Home
               </Text>
-
-              <TouchableOpacity onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}>
-                <Ionicons
-                  name="notifications-outline"
-                  size={24}
-                  className="text-light-text dark:text-dark-text"
-                />
-              </TouchableOpacity>
             </View>
 
             <Search />

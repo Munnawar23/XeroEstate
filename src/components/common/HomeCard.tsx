@@ -1,7 +1,8 @@
+
 import { useFavorites } from "@/context/FavoritesContext";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
 
 interface Property {
   id: string;
@@ -23,6 +24,12 @@ export const HomeCard = ({ item, onPress, onFavoriteToggle }: Props) => {
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorite = isFavorite(item.id);
 
+  // Calculate card width: (Screen Width - (Horizontal Padding * 2) - Gap) / 2
+  // Padding: px-5 (20px) * 2 = 40px
+  // Gap: gap-5 (20px)
+  // Total deduction: 60px
+  const cardWidth = (Dimensions.get("window").width - 60) / 2;
+
   // Helper to get image source
   const getImageSource = () => {
     return { uri: item.image };
@@ -41,7 +48,8 @@ export const HomeCard = ({ item, onPress, onFavoriteToggle }: Props) => {
 
   return (
     <TouchableOpacity
-      className="flex-1 w-full mt-4 px-3 py-4 rounded-lg bg-light-surface dark:bg-dark-surface shadow-lg relative"
+      className="mt-4 px-3 py-4 rounded-lg bg-light-surface dark:bg-dark-surface shadow-lg relative"
+      style={{ width: cardWidth }}
       onPress={handlePress}
     >
       <Image
