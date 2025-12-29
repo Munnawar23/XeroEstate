@@ -1,6 +1,8 @@
+import { useFavorites } from "@/context/FavoritesContext";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Image, Text, TouchableOpacity, View } from "react-native";
+import Toast from "react-native-toast-message";
 
 interface Property {
   id: string;
@@ -18,6 +20,9 @@ interface Props {
 }
 
 export const PremiumCard = ({ item, onPress }: Props) => {
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const favorite = isFavorite(item.id);
+
   // Helper to get image source
   const getImageSource = () => {
     return { uri: item.image };
@@ -26,6 +31,19 @@ export const PremiumCard = ({ item, onPress }: Props) => {
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     onPress?.();
+  };
+
+  const handleFavoritePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    toggleFavorite(item);
+    
+    Toast.show({
+      type: 'success',
+      text1: !favorite ? 'Added to favorites!' : 'Removed from favorites',
+      text2: !favorite ? '❤️ Property saved' : '💔 Property removed',
+      position: 'top',
+      visibilityTime: 2000,
+    });
   };
 
   return (
@@ -62,8 +80,12 @@ export const PremiumCard = ({ item, onPress }: Props) => {
           <Text className="text-xl font-heading text-white">
             ${item.price}
           </Text>
-          <TouchableOpacity>
-            <Ionicons name="heart-outline" size={20} color="#FFFFFF" />
+          <TouchableOpacity onPress={handleFavoritePress}>
+            <Ionicons 
+              name={favorite ? "heart" : "heart-outline"} 
+              size={24} 
+              color={favorite ? "#EF4444" : "#FFFFFF"} 
+            />
           </TouchableOpacity>
         </View>
       </View>

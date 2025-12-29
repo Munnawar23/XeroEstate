@@ -14,6 +14,7 @@ import ScreenHeader from "@/components/common/ScreenHeader";
 import EmptyState from "@/components/layout/EmptyState";
 import ErrorState from "@/components/layout/ErrorState";
 import LoadingState from "@/components/layout/LoadingState";
+import { useFavorites } from "@/context/FavoritesContext";
 import { useProperties } from "@/hooks/useProperties";
 
 const ITEMS_PER_PAGE = 8;
@@ -21,6 +22,7 @@ const ITEMS_PER_PAGE = 8;
 const CategoryScreen = () => {
   const { type } = useLocalSearchParams<{ type: string }>();
   const { properties, featuredProperties, loading, error, refetch } = useProperties();
+  const { favorites } = useFavorites();
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
 
@@ -29,8 +31,11 @@ const CategoryScreen = () => {
     if (type === "premium") {
       return featuredProperties;
     }
+    if (type === "favorites") {
+      return favorites;
+    }
     return properties;
-  }, [properties, featuredProperties, type]);
+  }, [properties, featuredProperties, favorites, type]);
 
   // Paginated properties
   const paginatedProperties = useMemo(() => {
@@ -57,6 +62,7 @@ const CategoryScreen = () => {
   // Get title based on type
   const getTitle = () => {
     if (type === "premium") return "Premium Listings";
+    if (type === "favorites") return "Saved Properties";
     return "All Properties";
   };
 
@@ -98,10 +104,12 @@ const CategoryScreen = () => {
         }
         ListEmptyComponent={
           <EmptyState
-            title="No properties found"
+            title={type === "favorites" ? "No saved properties" : "No properties found"}
             message={
               type === "premium"
                 ? "No premium listings available at the moment"
+                : type === "favorites"
+                ? "Start saving properties by tapping the heart icon"
                 : "No properties available"
             }
           />

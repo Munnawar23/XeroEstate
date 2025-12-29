@@ -267,7 +267,11 @@ export default function ProfileScreen() {
             title={notificationsEnabled ? "Notifications (On)" : "Notifications (Off)"}
             onPress={handleToggleNotifications}
           />
-          <SettingsItem icon="heart-outline" title="Saved Properties" />
+          <SettingsItem 
+            icon="heart-outline" 
+            title="Saved Properties" 
+            onPress={() => router.push('/category/favorites' as any)}
+          />
           <SettingsItem icon="settings-outline" title="Settings" />
           <SettingsItem icon="help-circle-outline" title="Help & Support" />
         </View>

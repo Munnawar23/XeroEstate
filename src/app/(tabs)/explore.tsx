@@ -3,12 +3,13 @@ import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo } from "react";
 import {
-  FlatList,
-  Text,
-  TouchableOpacity,
-  View,
+    FlatList,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 import Filters from "@/components/common/Filters";
 import HomeCard from "@/components/common/HomeCard";
@@ -60,6 +61,16 @@ const Explore = () => {
     router.back();
   };
 
+  const handleFavoriteToggle = (isFavorite: boolean) => {
+    Toast.show({
+      type: 'success',
+      text1: isFavorite ? 'Added to favorites!' : 'Removed from favorites',
+      text2: isFavorite ? '❤️ Property saved' : '💔 Property removed',
+      position: 'top',
+      visibilityTime: 2000,
+    });
+  };
+
   // Show loading state
   if (loading && properties.length === 0) {
     return <LoadingState />;
@@ -76,7 +87,11 @@ const Explore = () => {
         data={filteredProperties}
         numColumns={2}
         renderItem={({ item }) => (
-          <HomeCard item={item} onPress={() => handleCardPress(item.id)} />
+          <HomeCard 
+            item={item} 
+            onPress={() => handleCardPress(item.id)}
+            onFavoriteToggle={handleFavoriteToggle} 
+          />
         )}
         keyExtractor={(item) => item.id}
         contentContainerClassName="pb-32"

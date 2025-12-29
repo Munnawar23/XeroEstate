@@ -1,3 +1,4 @@
+import { useFavorites } from "@/context/FavoritesContext";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -15,9 +16,13 @@ interface Property {
 interface Props {
   item: Property;
   onPress?: () => void;
+  onFavoriteToggle?: (isFavorite: boolean) => void;
 }
 
-export const HomeCard = ({ item, onPress }: Props) => {
+export const HomeCard = ({ item, onPress, onFavoriteToggle }: Props) => {
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const favorite = isFavorite(item.id);
+
   // Helper to get image source
   const getImageSource = () => {
     return { uri: item.image };
@@ -26,6 +31,12 @@ export const HomeCard = ({ item, onPress }: Props) => {
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     onPress?.();
+  };
+
+  const handleFavoritePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    toggleFavorite(item);
+    onFavoriteToggle?.(!favorite);
   };
 
   return (
@@ -51,8 +62,12 @@ export const HomeCard = ({ item, onPress }: Props) => {
           <Text className="text-base font-heading text-light-primary dark:text-dark-primary">
             ${item.price}
           </Text>
-          <TouchableOpacity>
-            <Ionicons name="heart-outline" size={20} color="#64748B" />
+          <TouchableOpacity onPress={handleFavoritePress}>
+            <Ionicons 
+              name={favorite ? "heart" : "heart-outline"} 
+              size={20} 
+              color={favorite ? "#EF4444" : "#64748B"} 
+            />
           </TouchableOpacity>
         </View>
       </View>

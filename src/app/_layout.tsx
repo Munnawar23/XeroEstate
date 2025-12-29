@@ -1,10 +1,12 @@
 import { AuthProvider } from "@/context/AuthContext";
+import { FavoritesProvider } from "@/context/FavoritesContext";
 import { requestNotificationPermissions } from "@/services/notifications";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
+import Toast from "react-native-toast-message";
 import "../../global.css";
 
 export default function RootLayout() {
@@ -27,13 +29,16 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthProvider>
-      <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-        }}
-      />
-    </AuthProvider>
+    <FavoritesProvider>
+      <AuthProvider>
+        <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        />
+        <Toast />
+      </AuthProvider>
+    </FavoritesProvider>
   );
 }

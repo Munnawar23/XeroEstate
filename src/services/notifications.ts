@@ -48,6 +48,18 @@ export async function requestNotificationPermissions() {
 // Schedule morning notification (11 AM)
 export async function scheduleMorningNotification() {
   try {
+    // Calculate seconds until 11 AM
+    const now = new Date();
+    const scheduledTime = new Date();
+    scheduledTime.setHours(11, 0, 0, 0);
+    
+    // If 11 AM has passed today, schedule for tomorrow
+    if (scheduledTime <= now) {
+      scheduledTime.setDate(scheduledTime.getDate() + 1);
+    }
+    
+    const secondsUntilTrigger = Math.floor((scheduledTime.getTime() - now.getTime()) / 1000);
+
     await Notifications.scheduleNotificationAsync({
       content: {
         title: '🏡 Good Morning!',
@@ -57,9 +69,8 @@ export async function scheduleMorningNotification() {
         data: { screen: 'home' },
       },
       trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
-        hour: 11,
-        minute: 0,
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: secondsUntilTrigger,
         repeats: true,
       },
     });
@@ -73,6 +84,18 @@ export async function scheduleMorningNotification() {
 // Schedule evening notification (9 PM)
 export async function scheduleEveningNotification() {
   try {
+    // Calculate seconds until 9 PM
+    const now = new Date();
+    const scheduledTime = new Date();
+    scheduledTime.setHours(21, 0, 0, 0);
+    
+    // If 9 PM has passed today, schedule for tomorrow
+    if (scheduledTime <= now) {
+      scheduledTime.setDate(scheduledTime.getDate() + 1);
+    }
+    
+    const secondsUntilTrigger = Math.floor((scheduledTime.getTime() - now.getTime()) / 1000);
+
     await Notifications.scheduleNotificationAsync({
       content: {
         title: '🌙 Good Evening!',
@@ -82,9 +105,8 @@ export async function scheduleEveningNotification() {
         data: { screen: 'home' },
       },
       trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
-        hour: 21, // 9 PM in 24-hour format
-        minute: 0,
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: secondsUntilTrigger,
         repeats: true,
       },
     });

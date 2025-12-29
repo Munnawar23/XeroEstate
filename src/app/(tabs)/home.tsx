@@ -11,6 +11,7 @@ import {
   View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 import Filters from "@/components/common/Filters";
 import HomeCard from "@/components/common/HomeCard";
@@ -19,6 +20,7 @@ import EmptyState from "@/components/layout/EmptyState";
 import ErrorState from "@/components/layout/ErrorState";
 import LoadingState from "@/components/layout/LoadingState";
 import { useHome } from "@/hooks/useHome";
+
 
 const HomeScreen = () => {
   const {
@@ -51,6 +53,16 @@ const HomeScreen = () => {
   const handleSeeAllHome = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     router.push("/category/all" as any);
+  };
+
+  const handleFavoriteToggle = (isFavorite: boolean) => {
+    Toast.show({
+      type: 'success',
+      text1: isFavorite ? 'Added to favorites!' : 'Removed from favorites',
+      text2: isFavorite ? '❤️ Property saved' : '💔 Property removed',
+      position: 'top',
+      visibilityTime: 2000,
+    });
   };
 
   // Show loading state
@@ -163,6 +175,7 @@ const HomeScreen = () => {
               <HomeCard
                 item={item}
                 onPress={() => handleCardPress(item.id)}
+                onFavoriteToggle={handleFavoriteToggle}
               />
             )}
             keyExtractor={(item) => item.id}

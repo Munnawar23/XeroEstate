@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -12,9 +13,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Toast from "react-native-toast-message";
+
 
 
 import { facilities } from "@/constants/data";
+import { useFavorites } from "@/context/FavoritesContext";
 import { getPropertyById } from "@/services/database";
 import type { Property } from "@/types/property";
 
@@ -22,7 +26,37 @@ const PropertyDetails = () => {
   const { id } = useLocalSearchParams<{ id?: string }>();
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const favorite = property ? isFavorite(property.$id) : false;
+
   const windowHeight = Dimensions.get("window").height;
+
+  const handleFavoriteToggle = () => {
+    if (!property) return;
+    
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    
+    // Convert Appwrite property to Favorite property structure
+    const favoriteProp = {
+      id: property.$id,
+      name: property.name,
+      address: property.address,
+      price: property.price,
+      image: property.image || "",
+      category: property.type,
+    };
+    
+    toggleFavorite(favoriteProp);
+    
+    Toast.show({
+      type: 'success',
+      text1: !favorite ? 'Added to favorites!' : 'Removed from favorites',
+      text2: !favorite ? '❤️ Property saved' : '💔 Property removed',
+      position: 'top',
+      visibilityTime: 2000,
+    });
+  };
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -103,8 +137,15 @@ const PropertyDetails = () => {
             </TouchableOpacity>
 
             <View className="flex flex-row items-center gap-3">
-              <TouchableOpacity className="bg-light-surface/90 dark:bg-dark-surface/90 rounded-full size-11 items-center justify-center">
-                <Ionicons name="heart-outline" size={24} color="#EF4444" />
+              <TouchableOpacity 
+                onPress={handleFavoriteToggle}
+                className="bg-light-surface/90 dark:bg-dark-surface/90 rounded-full size-11 items-center justify-center"
+              >
+                <Ionicons 
+                  name={favorite ? "heart" : "heart-outline"} 
+                  size={24} 
+                  color="#EF4444" 
+                />
               </TouchableOpacity>
               <TouchableOpacity className="bg-light-surface/90 dark:bg-dark-surface/90 rounded-full size-11 items-center justify-center">
                 <Ionicons
