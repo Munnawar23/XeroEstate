@@ -1,4 +1,5 @@
 import { useAuth } from '@/context/AuthContext';
+import { cancelAllNotifications, scheduleDailyNotifications, sendTestNotification } from '@/services/notifications';
 import { seedDatabase } from '@/services/seed';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -55,6 +56,7 @@ export default function ProfileScreen() {
   const { user, logout, refetchUser } = useAuth();
   const router = useRouter();
   const [isSeeding, setIsSeeding] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -156,6 +158,45 @@ export default function ProfileScreen() {
     }
   };
 
+  const handleToggleNotifications = async () => {
+    try {
+      if (notificationsEnabled) {
+        // Disable notifications
+        await cancelAllNotifications();
+        setNotificationsEnabled(false);
+        Alert.alert('Disabled', 'Daily notifications have been turned off');
+      } else {
+        // Enable notifications
+        const success = await scheduleDailyNotifications();
+        if (success) {
+          setNotificationsEnabled(true);
+          Alert.alert(
+            'Enabled! 🔔',
+            'You will receive daily reminders at:\n• 11:00 AM - Morning reminder\n• 9:00 PM - Evening reminder'
+          );
+        } else {
+          Alert.alert('Error', 'Failed to enable notifications. Please check permissions.');
+        }
+      }
+    } catch (error) {
+      console.error('Notification toggle error:', error);
+      Alert.alert('Error', 'Failed to toggle notifications');
+    }
+  };
+
+  const handleTestNotification = async () => {
+    try {
+      const success = await sendTestNotification();
+      if (success) {
+        Alert.alert('Sent! 🧪', 'Test notification sent successfully!');
+      } else {
+        Alert.alert('Error', 'Failed to send test notification');
+      }
+    } catch (error) {
+      console.error('Test notification error:', error);
+      Alert.alert('Error', 'Failed to send test notification');
+    }
+  };
 
 
  
@@ -221,7 +262,11 @@ export default function ProfileScreen() {
         {/* General Settings Section */}
         <View className="flex flex-col mt-5 border-t pt-5 border-light-subtext/20 dark:border-dark-subtext/20">
           <SettingsItem icon="person-outline" title="Edit Profile" />
-          <SettingsItem icon="notifications-outline" title="Notifications" />
+          <SettingsItem 
+            icon="notifications-outline" 
+            title={notificationsEnabled ? "Notifications (On)" : "Notifications (Off)"}
+            onPress={handleToggleNotifications}
+          />
           <SettingsItem icon="heart-outline" title="Saved Properties" />
           <SettingsItem icon="settings-outline" title="Settings" />
           <SettingsItem icon="help-circle-outline" title="Help & Support" />
@@ -240,11 +285,18 @@ export default function ProfileScreen() {
               </Text>
             </View>
           ) : (
-            <SettingsItem
-              icon="cloud-upload-outline"
-              title="Seed Database"
-              onPress={handleSeedDatabase}
-            />
+            <>
+              <SettingsItem
+                icon="cloud-upload-outline"
+                title="Seed Database"
+                onPress={handleSeedDatabase}
+              />
+              <SettingsItem
+                icon="notifications-outline"
+                title="Test Notification"
+                onPress={handleTestNotification}
+              />
+            </>
           )}
         </View>
 

@@ -1,8 +1,10 @@
 import { AuthProvider } from "@/context/AuthContext";
+import { requestNotificationPermissions } from "@/services/notifications";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
+import { useEffect } from "react";
 import "../../global.css";
 
 export default function RootLayout() {
@@ -14,6 +16,11 @@ export default function RootLayout() {
     "SourceSans3-SemiBold": require("../assets/fonts/SourceSans3-SemiBold.ttf"),
     "Manrope-Medium": require("../assets/fonts/Manrope-Medium.ttf"),
   });
+
+  // Request notification permissions on app start
+  useEffect(() => {
+    requestNotificationPermissions();
+  }, []);
 
   if (!fontsLoaded) {
     return null;
