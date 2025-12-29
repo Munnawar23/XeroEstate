@@ -10,4 +10,6 @@ export const appwriteConfig = {
 
     galleries: process.env.EXPO_PUBLIC_APPWRITE_GALLERIES_COLLECTION_ID!,
   },
+  
+  bucketId: process.env.EXPO_PUBLIC_APPWRITE_BUCKET_ID!,
 };

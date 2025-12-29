@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import React, { useMemo } from "react";
 import {
   FlatList,
+  Image,
   RefreshControl,
   ScrollView,
   Text,
@@ -78,10 +79,18 @@ const HomeScreen = () => {
         <View className="px-5 mt-5">
           <View className="flex flex-row items-center justify-between">
             <View className="flex flex-row">
-              <View className="size-12 rounded-full bg-light-primary dark:bg-dark-primary items-center justify-center">
-                <Text className="text-xl font-heading text-white">
-                  {getUserInitials()}
-                </Text>
+              <View className="size-12 rounded-full bg-light-primary dark:bg-dark-primary items-center justify-center overflow-hidden">
+                {user?.avatar && (user.avatar.startsWith('file://') || user.avatar.startsWith('http')) ? (
+                  <Image
+                    source={{ uri: user.avatar }}
+                    className="size-full"
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <Text className="text-xl font-heading text-white">
+                    {getUserInitials()}
+                  </Text>
+                )}
               </View>
 
               <View className="flex flex-col items-start ml-2 justify-center">

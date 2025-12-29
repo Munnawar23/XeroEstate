@@ -1,11 +1,13 @@
 import { useAuth } from '@/context/AuthContext';
 import { seedDatabase } from '@/services/seed';
 import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Image,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -50,7 +52,7 @@ const SettingsItem = ({
 );
 
 export default function ProfileScreen() {
-  const { user, logout } = useAuth();
+  const { user, logout, refetchUser } = useAuth();
   const router = useRouter();
   const [isSeeding, setIsSeeding] = useState(false);
 
@@ -99,6 +101,61 @@ export default function ProfileScreen() {
     );
   };
 
+  const pickImage = async () => {
+    try {
+      // Request permission
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      
+      if (!permissionResult.granted) {
+        Alert.alert('Permission Required', 'Please allow access to your photo library to change your profile picture.');
+        return;
+      }
+
+      // Launch image picker
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        const asset = result.assets[0];
+        
+        // Show uploading alert
+        Alert.alert('Uploading', 'Please wait while we upload your profile picture...');
+        
+        // Import the functions
+        const { uploadAvatar, updateUserAvatar } = await import('@/services/appwrite');
+        const { appwriteConfig } = await import('@/config/appwrite');
+        
+        // Prepare file object
+        const file = {
+          uri: asset.uri,
+          name: `avatar-${Date.now()}.jpg`,
+          type: 'image/jpeg',
+        };
+        
+        // Upload to Appwrite Storage
+        const avatarUrl = await uploadAvatar(file, appwriteConfig.bucketId);
+        
+        // Update user avatar in Appwrite preferences
+        const success = await updateUserAvatar(avatarUrl);
+        
+        if (success) {
+          Alert.alert('Success', 'Profile picture updated successfully!');
+          // Refresh user data
+          await refetchUser();
+        } else {
+          Alert.alert('Error', 'Failed to update profile picture');
+        }
+      }
+    } catch (error) {
+      console.error('Image picker error:', error);
+      Alert.alert('Error', 'Failed to upload image. Please try again.');
+    }
+  };
+
 
 
  
@@ -128,13 +185,24 @@ export default function ProfileScreen() {
         {/* User Profile Section */}
         <View className="flex flex-row justify-center mt-5">
           <View className="flex flex-col items-center relative mt-5">
-            <View className="size-44 rounded-full bg-light-primary dark:bg-dark-primary items-center justify-center">
-              <Text className="text-5xl font-heading text-white">
-                {user?.name ? getInitials(user.name) : 'U'}
-              </Text>
+            <View className="size-44 rounded-full bg-light-primary dark:bg-dark-primary items-center justify-center overflow-hidden">
+              {user?.avatar && (user.avatar.startsWith('file://') || user.avatar.startsWith('http')) ? (
+                <Image
+                  source={{ uri: user.avatar }}
+                  className="size-full"
+                  resizeMode="cover"
+                />
+              ) : (
+                <Text className="text-5xl font-heading text-white">
+                  {user?.name ? getInitials(user.name) : 'U'}
+                </Text>
+              )}
             </View>
             
-            <TouchableOpacity className="absolute bottom-11 right-2 bg-light-surface dark:bg-dark-surface rounded-full p-2 shadow-lg">
+            <TouchableOpacity 
+              onPress={pickImage}
+              className="absolute bottom-11 right-2 bg-light-surface dark:bg-dark-surface rounded-full p-2 shadow-lg"
+            >
               <Ionicons name="pencil" size={20} className="text-light-primary dark:text-dark-primary" />
             </TouchableOpacity>
 
