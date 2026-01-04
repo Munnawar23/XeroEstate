@@ -1,22 +1,22 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
-  FlatList,
   Image,
   Linking,
   Platform,
   ScrollView,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
-
-
+import Toast from "react-native-toast-message";
 
 import { facilities } from "@/constants/data";
+import { useFavorites } from "@/context/FavoritesContext";
 import { getPropertyById } from "@/services/database";
 import type { Property } from "@/types/property";
 
@@ -25,6 +25,7 @@ const PropertyDetails = () => {
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
   const windowHeight = Dimensions.get("window").height;
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -43,6 +44,62 @@ const PropertyDetails = () => {
 
     fetchProperty();
   }, [id]);
+
+  const handleFavoritePress = () => {
+    if (!property) return;
+    
+    const isCurrentlyFavorite = isFavorite(property.$id);
+    
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    toggleFavorite({
+      id: property.$id,
+      name: property.name,
+      address: property.address,
+      price: property.price,
+      image: property.image || "",
+      category: property.type,
+    });
+
+    Toast.show({
+      type: 'success',
+      text1: !isCurrentlyFavorite ? 'Added to favorites!' : 'Removed from favorites',
+      text2: !isCurrentlyFavorite ? '❤️ Property saved' : '💔 Property removed',
+      position: 'top',
+      visibilityTime: 2000,
+    });
+  };
+
+  const handleGetDirections = () => {
+    if (!property || !property.geolocation) return;
+    
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    
+    // Parse coordinates from geolocation string (format: "lat,lng")
+    const [latitude, longitude] = property.geolocation.split(',').map(coord => coord.trim());
+    
+    // Create maps URL based on platform
+    const scheme = Platform.select({
+      ios: 'maps:', // Apple Maps
+      android: 'geo:', // Google Maps
+    });
+    
+    const url = Platform.select({
+      ios: `${scheme}0,0?q=${latitude},${longitude}`,
+      android: `${scheme}0,0?q=${latitude},${longitude}(${encodeURIComponent(property.name)})`,
+    });
+    
+    // Open maps app
+    Linking.openURL(url || '').catch(err => {
+      console.error('Error opening maps:', err);
+      Toast.show({
+        type: 'error',
+        text1: 'Could not open maps',
+        text2: 'Please try again',
+        position: 'top',
+        visibilityTime: 2000,
+      });
+    });
+  };
 
   if (loading) {
     return (
@@ -105,8 +162,15 @@ const PropertyDetails = () => {
             </TouchableOpacity>
 
             <View className="flex flex-row items-center gap-3">
-              <TouchableOpacity className="bg-light-surface/90 dark:bg-dark-surface/90 rounded-full size-11 items-center justify-center">
-                <Ionicons name="heart-outline" size={24} color="#EF4444" />
+              <TouchableOpacity 
+                onPress={handleFavoritePress}
+                className="bg-light-surface/90 dark:bg-dark-surface/90 rounded-full size-11 items-center justify-center"
+              >
+                <Ionicons 
+                  name={property && isFavorite(property.$id) ? "heart" : "heart-outline"} 
+                  size={24} 
+                  color="#EF4444" 
+                />
               </TouchableOpacity>
             </View>
           </View>
@@ -167,11 +231,19 @@ const PropertyDetails = () => {
 
               <View className="flex flex-row items-center justify-between mt-4">
                 <View className="flex flex-row items-center">
-                  <View className="size-14 rounded-full bg-light-primary dark:bg-dark-primary items-center justify-center">
-                    <Text className="text-xl font-heading text-white">
-                      {property.agent.name.charAt(0).toUpperCase()}
-                    </Text>
-                  </View>
+                  {property.agent.url ? (
+                    <Image
+                      source={{ uri: property.agent.url }}
+                      className="size-14 rounded-full"
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <View className="size-14 rounded-full bg-light-primary dark:bg-dark-primary items-center justify-center">
+                      <Text className="text-xl font-heading text-white">
+                        {property.agent.name.charAt(0).toUpperCase()}
+                      </Text>
+                    </View>
+                  )}
 
                   <View className="flex flex-col items-start justify-center ml-3">
                     <Text className="text-base text-light-text dark:text-dark-text font-bodyMedium">
@@ -249,27 +321,6 @@ const PropertyDetails = () => {
             </View>
           )}
 
-          {/* Gallery */}
-          {property.gallery && property.gallery.length > 0 && (
-            <View className="mt-5">
-              <Text className="text-light-text dark:text-dark-text text-xl font-heading">
-                Gallery
-              </Text>
-              <FlatList
-                data={property.gallery}
-                keyExtractor={(item) => item.$id}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                renderItem={({ item }) => (
-                  <Image
-                    source={{ uri: item.image }}
-                    className="size-40 rounded-xl"
-                  />
-                )}
-                contentContainerClassName="flex gap-4 mt-3"
-              />
-            </View>
-          )}
 
           {/* Location */}
           <View className="mt-5">
@@ -303,9 +354,13 @@ const PropertyDetails = () => {
             </Text>
           </View>
 
-          <TouchableOpacity className="flex-1 flex flex-row items-center justify-center bg-light-primary dark:bg-dark-primary py-3 rounded-xl shadow-lg">
+          <TouchableOpacity 
+            onPress={handleGetDirections}
+            className="flex-1 flex flex-row items-center justify-center bg-light-primary dark:bg-dark-primary py-3 rounded-xl shadow-lg gap-2"
+          >
+            <Ionicons name="navigate" size={20} color="#FFFFFF" />
             <Text className="text-white text-lg font-heading">
-              Book Now
+              Get Directions
             </Text>
           </TouchableOpacity>
         </View>

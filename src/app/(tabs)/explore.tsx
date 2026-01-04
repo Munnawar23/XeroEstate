@@ -5,9 +5,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  RefreshControl,
+  ScrollView,
   Text,
-  TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
@@ -80,11 +81,6 @@ const Explore = () => {
     router.push(`/property/${id}`);
   };
 
-  const handleBackPress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    router.back();
-  };
-
   const handleFavoriteToggle = (isFavorite: boolean) => {
     Toast.show({
       type: 'success',
@@ -106,81 +102,99 @@ const Explore = () => {
   }
 
   return (
-    <SafeAreaView className="h-full bg-light-background dark:bg-dark-background">
-      <FlatList
-        data={paginatedProperties}
-        numColumns={2}
-        renderItem={({ item }) => (
-          <HomeCard 
-            item={item} 
-            onPress={() => handleCardPress(item.id)}
-            onFavoriteToggle={handleFavoriteToggle} 
-          />
-        )}
-        keyExtractor={(item) => item.id}
-        contentContainerClassName="pb-32"
-        columnWrapperClassName="flex gap-5 px-5"
+    <SafeAreaView 
+      className="flex-1 bg-light-background dark:bg-dark-background" 
+      edges={['top']}
+      style={{ paddingTop: 10 }}
+    >
+      <ScrollView
+        className="flex-1"
         showsVerticalScrollIndicator={false}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={
-          loadingMore && hasMore ? (
-            <View className="py-6 items-center">
-              <ActivityIndicator size="large" color="#3B82F6" />
-              <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext mt-2">
-                Loading more...
-              </Text>
-            </View>
-          ) : !hasMore && paginatedProperties.length > 0 ? (
-            <View className="py-8 px-5 items-center">
-              <Ionicons 
-                name="checkmark-circle" 
-                size={48} 
-                color="#10B981" 
-              />
-              <Text className="text-base font-bodyMedium text-light-text dark:text-dark-text mt-3">
-                That's all for now!
-              </Text>
-            </View>
-          ) : null
-        }
-        ListEmptyComponent={
-          <EmptyState 
-            title="No properties found"
-            message="Try adjusting your search or filters"
+        refreshControl={
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={refetch}
+            tintColor="#3B82F6"
           />
         }
-        ListHeaderComponent={() => (
-          <View className="px-5">
-            <View className="flex flex-row items-center justify-normal mt-5 gap-3">
-              <TouchableOpacity
-                onPress={handleBackPress}
-                className="flex flex-row bg-light-surface dark:bg-dark-surface rounded-full size-11 items-center justify-center shadow-sm"
-              >
-                <Ionicons
-                  name="arrow-back"
-                  size={20}
-                  className="text-light-text dark:text-dark-text"
-                />
-              </TouchableOpacity>
+      >
+        {/* Header Section */}
+        <View className="px-5">
+          <Text className="text-2xl font-heading text-light-text dark:text-dark-text">
+            Search for Your Ideal Home
+          </Text>
+        </View>
 
-              <Text className="text-base text-center font-heading text-light-text dark:text-dark-text">
-                Search for Your Ideal Home
-              </Text>
-            </View>
+        {/* Search Section */}
+        <View className="px-5 mt-3">
+          <Search />
+        </View>
 
-            <Search />
+        {/* Filters Section */}
+        <View className="px-5 mt-5">
+          <Filters />
+        </View>
 
-            <View className="mt-5">
-              <Filters />
+        {/* Results Count */}
+        <View className="px-5 mt-5">
+          <Text className="text-xl font-heading text-light-text dark:text-dark-text">
+            Found {filteredProperties.length} {filteredProperties.length === 1 ? 'Property' : 'Properties'}
+          </Text>
+        </View>
 
-              <Text className="text-xl font-heading text-light-text dark:text-dark-text mt-5">
-                Found {filteredProperties.length} {filteredProperties.length === 1 ? 'Property' : 'Properties'}
-              </Text>
-            </View>
-          </View>
-        )}
-      />
+        {/* Properties Grid */}
+        <View className="mt-2 pb-20">
+          {paginatedProperties.length === 0 ? (
+            <EmptyState 
+              title="No properties found"
+              message="Try adjusting your search or filters"
+            />
+          ) : (
+            <>
+              <FlatList
+                data={paginatedProperties}
+                numColumns={2}
+                renderItem={({ item }) => (
+                  <HomeCard 
+                    item={item} 
+                    onPress={() => handleCardPress(item.id)}
+                    onFavoriteToggle={handleFavoriteToggle} 
+                  />
+                )}
+                keyExtractor={(item) => item.id}
+                columnWrapperClassName="flex gap-5 px-5"
+                scrollEnabled={false}
+                onEndReached={handleLoadMore}
+                onEndReachedThreshold={0.5}
+              />
+
+              {/* Loading More Indicator */}
+              {loadingMore && hasMore && (
+                <View className="py-6 items-center">
+                  <ActivityIndicator size="large" color="#3B82F6" />
+                  <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext mt-2">
+                    Loading more...
+                  </Text>
+                </View>
+              )}
+
+              {/* End of List */}
+              {!hasMore && paginatedProperties.length > 0 && (
+                <View className="py-8 px-5 items-center">
+                  <Ionicons 
+                    name="checkmark-circle" 
+                    size={48} 
+                    color="#10B981" 
+                  />
+                  <Text className="text-base font-bodyMedium text-light-text dark:text-dark-text mt-3">
+                    That's all for now!
+                  </Text>
+                </View>
+              )}
+            </>
+          )}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

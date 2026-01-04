@@ -19,11 +19,21 @@ export const galleryImages = [
 ];
 
 export const agentImages = [
-  "https://images.unsplash.com/photo-1691335053879-02096d6ee2ca?q=60&w=640&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1544723495-432537d12f6c?q=60&w=640&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=60&w=640&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1542507464418-09c375b86bbe?q=60&w=640&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1534308143481-c55f00be8bd7?q=60&w=640&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1691335053879-02096d6ee2ca?q=60&w=640&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1544723495-432537d12f6c?q=60&w=640&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=60&w=640&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1542507464418-09c375b86bbe?q=60&w=640&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1534308143481-c55f00be8bd7?q=60&w=640&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=60&w=640&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=60&w=640&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=60&w=640&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=60&w=640&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=60&w=640&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=60&w=640&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?q=60&w=640&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=60&w=640&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=60&w=640&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=60&w=640&auto=format&fit=crop",
 ];
 
 
@@ -58,6 +68,16 @@ const agentNames = [
   { name: "Emily Rodriguez", email: "emily.rodriguez@xeroestate.com" },
   { name: "David Thompson", email: "david.thompson@xeroestate.com" },
   { name: "Jessica Williams", email: "jessica.williams@xeroestate.com" },
+  { name: "Robert Martinez", email: "robert.martinez@xeroestate.com" },
+  { name: "Amanda Davis", email: "amanda.davis@xeroestate.com" },
+  { name: "Christopher Lee", email: "christopher.lee@xeroestate.com" },
+  { name: "Jennifer Taylor", email: "jennifer.taylor@xeroestate.com" },
+  { name: "Daniel Anderson", email: "daniel.anderson@xeroestate.com" },
+  { name: "Michelle White", email: "michelle.white@xeroestate.com" },
+  { name: "James Harris", email: "james.harris@xeroestate.com" },
+  { name: "Lisa Clark", email: "lisa.clark@xeroestate.com" },
+  { name: "Kevin Lewis", email: "kevin.lewis@xeroestate.com" },
+  { name: "Rachel Walker", email: "rachel.walker@xeroestate.com" },
 ];
 
 
@@ -69,7 +89,22 @@ const propertyNames = [
   "Lakeside Manor", "Skyline Tower", "Garden Estate", "Riverside Residence",
   "Hillside Haven", "Coastal Paradise", "Downtown Loft", "Suburban Sanctuary",
   "Metro Heights", "Parkside Palace", "Beachfront Bliss", "City Center Suite",
-  "Valley View Villa", "Harbor House", "Forest Lodge", "Meadow Mansion"
+  "Valley View Villa", "Harbor House", "Forest Lodge", "Meadow Mansion",
+  "Crystal Bay Estate", "Emerald Tower", "Golden Gate Manor", "Silver Lake House",
+  "Diamond Heights", "Pearl Harbor View", "Ruby Ridge Estate", "Sapphire Shores",
+  "Platinum Plaza", "Bronze Bay Villa", "Copper Creek Lodge", "Ivory Tower Residence",
+  "Jade Garden Estate", "Opal Ocean View", "Topaz Terrace", "Amber Avenue House",
+  "Quartz Quarter Loft", "Onyx Overlook", "Garnet Grove Manor", "Turquoise Tide Villa",
+  "Coral Cove Estate", "Marble Mountain House", "Granite Gardens", "Limestone Lodge",
+  "Sandstone Sanctuary", "Slate Sky Tower", "Cobblestone Court", "Brick Bay Manor",
+  "Stone Summit Villa", "Clay Canyon Estate", "Willow Creek Residence", "Pine Valley Manor",
+  "Cedar Point Estate", "Maple Grove House", "Birch Bay Villa", "Oak Ridge Mansion",
+  "Aspen Heights", "Redwood Retreat", "Palm Paradise", "Cypress Cove",
+  "Magnolia Manor", "Laurel Lane Estate", "Rosewood Residence", "Ivy League Loft",
+  "Jasmine Gardens", "Orchid Overlook", "Lotus Lake House", "Tulip Terrace",
+  "Daisy Dell Manor", "Lily Pond Estate", "Violet Vista", "Poppy Place",
+  "Sunflower Summit", "Lavender Lane", "Primrose Plaza", "Azalea Avenue",
+  "Camellia Court", "Dahlia Drive", "Gardenia Grove", "Hibiscus Heights"
 ];
 
 const addresses = [
@@ -92,7 +127,37 @@ const addresses = [
   "735 Garden Street, Savannah, GA 31401",
   "846 Urban Way, Philadelphia, PA 19102",
   "957 Meadow Lane, Raleigh, NC 27601",
-  "168 Lakefront Road, Minneapolis, MN 55401"
+  "168 Lakefront Road, Minneapolis, MN 55401",
+  "234 Crystal Bay, Tampa, FL 33602",
+  "567 Emerald Street, Portland, ME 04101",
+  "890 Golden Avenue, Sacramento, CA 95814",
+  "432 Silver Circle, Las Vegas, NV 89101",
+  "765 Diamond Drive, Honolulu, HI 96813",
+  "198 Pearl Plaza, San Diego, CA 92101",
+  "876 Ruby Road, Salt Lake City, UT 84101",
+  "543 Sapphire Shore, Virginia Beach, VA 23451",
+  "210 Platinum Place, Dallas, TX 75201",
+  "987 Bronze Boulevard, Detroit, MI 48226",
+  "654 Copper Court, Pittsburgh, PA 15222",
+  "321 Ivory Lane, Indianapolis, IN 46204",
+  "789 Jade Junction, Columbus, OH 43215",
+  "456 Opal Ocean, Jacksonville, FL 32202",
+  "123 Topaz Trail, Charlotte, NC 28202",
+  "890 Amber Alley, Memphis, TN 38103",
+  "567 Quartz Quarter, Louisville, KY 40202",
+  "234 Onyx Overlook, Milwaukee, WI 53202",
+  "901 Garnet Grove, Albuquerque, NM 87102",
+  "678 Turquoise Terrace, Tucson, AZ 85701",
+  "345 Coral Cove, Fresno, CA 93721",
+  "012 Marble Mile, Sacramento, CA 95814",
+  "789 Granite Gateway, Mesa, AZ 85201",
+  "456 Limestone Loop, Kansas City, MO 64106",
+  "123 Sandstone Street, Oklahoma City, OK 73102",
+  "890 Slate Square, Omaha, NE 68102",
+  "567 Cobblestone Circle, Cleveland, OH 44113",
+  "234 Brick Bay, Wichita, KS 67202",
+  "901 Stone Summit, Arlington, TX 76010",
+  "678 Clay Canyon, New Orleans, LA 70112"
 ];
 
 // Geolocation coordinates (latitude, longitude) for each address
@@ -116,7 +181,37 @@ const geolocations = [
   "32.0809,-81.0912",  // Savannah, GA
   "39.9526,-75.1652",  // Philadelphia, PA
   "35.7796,-78.6382",  // Raleigh, NC
-  "44.9778,-93.2650"   // Minneapolis, MN
+  "44.9778,-93.2650",  // Minneapolis, MN
+  "27.9506,-82.4572",  // Tampa, FL
+  "43.6591,-70.2568",  // Portland, ME
+  "38.5816,-121.4944", // Sacramento, CA
+  "36.1699,-115.1398", // Las Vegas, NV
+  "21.3099,-157.8581", // Honolulu, HI
+  "32.7157,-117.1611", // San Diego, CA
+  "40.7608,-111.8910", // Salt Lake City, UT
+  "36.8529,-75.9780",  // Virginia Beach, VA
+  "32.7767,-96.7970",  // Dallas, TX
+  "42.3314,-83.0458",  // Detroit, MI
+  "40.4406,-79.9959",  // Pittsburgh, PA
+  "39.7684,-86.1581",  // Indianapolis, IN
+  "39.9612,-82.9988",  // Columbus, OH
+  "30.3322,-81.6557",  // Jacksonville, FL
+  "35.2271,-80.8431",  // Charlotte, NC
+  "35.1495,-90.0490",  // Memphis, TN
+  "38.2527,-85.7585",  // Louisville, KY
+  "43.0389,-87.9065",  // Milwaukee, WI
+  "35.0844,-106.6504", // Albuquerque, NM
+  "32.2226,-110.9747", // Tucson, AZ
+  "36.7378,-119.7871", // Fresno, CA
+  "38.5816,-121.4944", // Sacramento, CA
+  "33.4152,-111.8315", // Mesa, AZ
+  "39.0997,-94.5786",  // Kansas City, MO
+  "35.4676,-97.5164",  // Oklahoma City, OK
+  "41.2565,-95.9345",  // Omaha, NE
+  "41.4993,-81.6944",  // Cleveland, OH
+  "37.6872,-97.3301",  // Wichita, KS
+  "32.7357,-97.1081",  // Arlington, TX
+  "29.9511,-90.0715"   // New Orleans, LA
 ];
 
 const propertyTypes = ["House", "Townhouse", "Duplex", "Studio", "Villa", "Apartment", "Other"];
@@ -203,14 +298,12 @@ export async function seedDatabase() {
     // Step 1: Clear all existing data
     console.log("\n📦 Clearing existing data...");
     await clearCollection(appwriteConfig.collections.properties, "properties");
-
-    await clearCollection(appwriteConfig.collections.galleries, "galleries");
     await clearCollection(appwriteConfig.collections.agents, "agents");
 
-    // Step 2: Create 5 agents
+    // Step 2: Create 15 agents
     console.log("\n👥 Creating agents...");
     const createdAgents = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 15; i++) {
       const agent = await databases.createDocument(
         appwriteConfig.databaseId,
         appwriteConfig.collections.agents,
@@ -218,7 +311,7 @@ export async function seedDatabase() {
         {
           name: agentNames[i].name,
           email: agentNames[i].email,
-          url: agentImages[i],
+          url: agentImages[i % agentImages.length],
         }
       );
       createdAgents.push(agent);
@@ -228,29 +321,12 @@ export async function seedDatabase() {
 
 
 
-    // Step 4: Create gallery items
-    console.log("\n🖼️  Creating gallery images...");
-    const createdGalleries = [];
-    for (const imageUrl of galleryImages) {
-      const gallery = await databases.createDocument(
-        appwriteConfig.databaseId,
-        appwriteConfig.collections.galleries,
-        ID.unique(),
-        {
-          image: imageUrl,
-        }
-      );
-      createdGalleries.push(gallery);
-      await delay(200); // Small delay between creations
-    }
-    console.log(`✓ Created ${createdGalleries.length} gallery images`);
 
-    // Step 5: Create 20 properties
+
+    // Step 3: Create 80 properties
     console.log("\n🏠 Creating properties...");
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 80; i++) {
       const randomAgent = getRandomItem(createdAgents);
-
-      const randomGalleries = getRandomItems(createdGalleries, getRandomInt(3, 8));
       const randomFacilities = getRandomItems(facilities, getRandomInt(2, 4));
 
       const property = await databases.createDocument(
@@ -258,20 +334,19 @@ export async function seedDatabase() {
         appwriteConfig.collections.properties,
         ID.unique(),
         {
-          name: propertyNames[i],
+          name: propertyNames[i % propertyNames.length],
           description: getRandomItem(descriptions),
-          address: addresses[i],
-          price: getRandomInt(300000, 5000000),
+          address: addresses[i % addresses.length],
+          price: getRandomInt(250000, 8500000),
           area: getRandomFloat(800, 5000, 0),
           bedrooms: getRandomInt(1, 6),
           bathrooms: getRandomInt(1, 4),
 
-          image: propertiesImages[i],
-          geolocation: geolocations[i],
+          image: propertiesImages[i % propertiesImages.length],
+          geolocation: geolocations[i % geolocations.length],
           type: getRandomItem(propertyTypes),
           facilities: randomFacilities,
           agent: randomAgent.$id,
-          gallery: randomGalleries.map(g => g.$id),
 
         }
       );
@@ -285,10 +360,8 @@ export async function seedDatabase() {
 
     console.log("\n✅ Database seeding completed successfully!");
     console.log(`\nSummary:`);
-    console.log(`- Agents: 5`);
-
-    console.log(`- Gallery Images: ${createdGalleries.length}`);
-    console.log(`- Properties: 20`);
+    console.log(`- Agents: 15`);
+    console.log(`- Properties: 80`);
 
     return {
       success: true,

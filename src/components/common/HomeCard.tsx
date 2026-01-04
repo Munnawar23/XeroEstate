@@ -48,7 +48,7 @@ export const HomeCard = ({ item, onPress, onFavoriteToggle }: Props) => {
 
   return (
     <TouchableOpacity
-      className="mt-4 px-3 py-4 rounded-lg bg-light-surface dark:bg-dark-surface shadow-lg relative"
+      className="mt-4 mb-4 px-3 py-4 rounded-lg bg-light-surface dark:bg-dark-surface shadow-lg relative"
       style={{ width: cardWidth }}
       onPress={handlePress}
     >

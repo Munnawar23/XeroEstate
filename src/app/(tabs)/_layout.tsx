@@ -20,7 +20,7 @@ export default function TabLayout() {
           backgroundColor: isDark ? '#171717' : '#FFFFFF',
           borderTopWidth: 1,
           borderTopColor: isDark ? '#262626' : '#E5E7EB',
-          height: 60 + bottom,
+          height: 50 + bottom,
           paddingBottom: bottom > 0 ? bottom : 8,
           paddingTop: 8,
         },

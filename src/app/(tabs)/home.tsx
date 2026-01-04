@@ -42,7 +42,7 @@ const HomeScreen = () => {
 
   // Limit home properties to 8
   const limitedHomeProperties = useMemo(() => {
-    return filteredProperties.slice(0, 8);
+    return filteredProperties.slice(0, 10);
   }, [filteredProperties]);
 
   const handleSeeAllPremium = () => {
@@ -76,8 +76,9 @@ const HomeScreen = () => {
   }
 
   return (
-    <SafeAreaView className="h-full bg-light-background dark:bg-dark-background">
+    <SafeAreaView className="flex-1 bg-light-background dark:bg-dark-background" edges={['top']}>
       <ScrollView
+        className="flex-1"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -88,7 +89,7 @@ const HomeScreen = () => {
         }
       >
         {/* Header Section */}
-        <View className="px-5 mt-5">
+        <View className="px-5">
           <View className="flex flex-row items-center justify-between">
             <View className="flex flex-row">
               <View className="size-12 rounded-full bg-light-primary dark:bg-dark-primary items-center justify-center overflow-hidden">
@@ -167,7 +168,7 @@ const HomeScreen = () => {
         </View>
 
         {/* Properties Grid */}
-        <View className="mt-5 pb-5">
+        <View className="mt-2 pb-5">
           <FlatList
             data={limitedHomeProperties}
             numColumns={2}
@@ -191,7 +192,7 @@ const HomeScreen = () => {
         </View>
 
         {/* Footer */}
-        <View className="mt-10 mb-8 px-5">
+        * <View className="mt-0 mb-8 px-5">
           <View className="w-full h-px bg-light-subtext/20 dark:bg-dark-subtext/20 mb-6" />
           
           <View className="items-center">
@@ -210,7 +211,7 @@ const HomeScreen = () => {
               Version 1.0.0
             </Text>
           </View>
-        </View>
+        </View> 
       </ScrollView>
     </SafeAreaView>
   );
