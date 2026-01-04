@@ -192,7 +192,7 @@ const HomeScreen = () => {
         </View>
 
         {/* Footer */}
-        * <View className="mt-0 mb-8 px-5">
+        <View className="mt-0 mb-8 px-5">
           <View className="w-full h-px bg-light-subtext/20 dark:bg-dark-subtext/20 mb-6" />
           
           <View className="items-center">
