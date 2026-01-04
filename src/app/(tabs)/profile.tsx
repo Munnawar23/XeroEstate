@@ -15,6 +15,7 @@ import {
   View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 
 import { cancelAllNotifications, scheduleDailyNotifications } from '@/services/notifications';
 
@@ -27,11 +28,23 @@ export default function ProfileScreen() {
   const handleLogout = async () => {
     try {
       await logout();
-      Alert.alert('Success', 'Logged out successfully');
+      Toast.show({
+        type: 'success',
+        text1: 'Logged out successfully',
+        text2: 'See you soon! 👋',
+        position: 'top',
+        visibilityTime: 2000,
+      });
       router.replace('/(auth)/login');
     } catch (error) {
       console.error('Logout error:', error);
-      Alert.alert('Error', 'Failed to logout');
+      Toast.show({
+        type: 'error',
+        text1: 'Logout failed',
+        text2: 'Please try again',
+        position: 'top',
+        visibilityTime: 2000,
+      });
     }
   };
 
@@ -91,18 +104,42 @@ export default function ProfileScreen() {
         const success = await scheduleDailyNotifications();
         if (success) {
           setNotificationsEnabled(true);
-          Alert.alert('Enabled! 🔔', 'You will receive daily property updates');
+          Toast.show({
+            type: 'success',
+            text1: 'Notifications Enabled! 🔔',
+            text2: 'You will receive daily property updates',
+            position: 'top',
+            visibilityTime: 3000,
+          });
         } else {
-          Alert.alert('Error', 'Failed to enable notifications. Please check permissions.');
+          Toast.show({
+            type: 'error',
+            text1: 'Failed to enable notifications',
+            text2: 'Please check permissions',
+            position: 'top',
+            visibilityTime: 2000,
+          });
         }
       } else {
         await cancelAllNotifications();
         setNotificationsEnabled(false);
-        Alert.alert('Disabled', 'Notifications have been turned off');
+        Toast.show({
+          type: 'info',
+          text1: 'Notifications Disabled',
+          text2: 'You won\'t receive updates',
+          position: 'top',
+          visibilityTime: 2000,
+        });
       }
     } catch (error) {
       console.error('Notification toggle error:', error);
-      Alert.alert('Error', 'Failed to toggle notifications');
+      Toast.show({
+        type: 'error',
+        text1: 'Failed to toggle notifications',
+        text2: 'Please try again',
+        position: 'top',
+        visibilityTime: 2000,
+      });
     }
   };
 
@@ -128,33 +165,33 @@ export default function ProfileScreen() {
 
         {/* User Profile Section */}
         <View className="flex flex-row justify-center mb-8">
-          <View className="flex flex-col items-center relative">
-            <View className="size-32 rounded-full bg-light-primary dark:bg-dark-primary items-center justify-center overflow-hidden">
-              {user?.avatar && (user.avatar.startsWith('file://') || user.avatar.startsWith('http')) ? (
-                <Image
-                  source={{ uri: user.avatar }}
-                  className="size-full"
-                  resizeMode="cover"
-                />
-              ) : (
-                <Text className="text-4xl font-heading text-white">
-                  {user?.name ? getInitials(user.name) : 'U'}
-                </Text>
-              )}
+          <View className="flex flex-col items-center">
+            <View className="relative">
+              <View className="size-32 rounded-full bg-light-primary dark:bg-dark-primary items-center justify-center overflow-hidden">
+                {user?.avatar && (user.avatar.startsWith('file://') || user.avatar.startsWith('http')) ? (
+                  <Image
+                    source={{ uri: user.avatar }}
+                    className="size-full"
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <Text className="text-4xl font-heading text-white">
+                    {user?.name ? getInitials(user.name) : 'U'}
+                  </Text>
+                )}
+              </View>
+              
+              <TouchableOpacity 
+                onPress={pickImage}
+                className="absolute bottom-0 right-0 bg-light-primary dark:bg-dark-primary rounded-full p-2.5 shadow-lg border-2 border-light-background dark:border-dark-background"
+                activeOpacity={0.7}
+              >
+                <Ionicons name="pencil" size={16} color="#FFFFFF" />
+              </TouchableOpacity>
             </View>
-            
-            <TouchableOpacity 
-              onPress={pickImage}
-              className="absolute bottom-0 right-0 bg-light-primary dark:bg-dark-primary rounded-full p-2 shadow-lg"
-            >
-              <Ionicons name="pencil" size={16} color="#FFFFFF" />
-            </TouchableOpacity>
 
             <Text className="text-xl font-heading mt-3 text-light-text dark:text-dark-text">
               {user?.name || 'User'}
-            </Text>
-            <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext mt-1">
-              {user?.email || ''}
             </Text>
           </View>
         </View>
