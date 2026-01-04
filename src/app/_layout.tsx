@@ -30,9 +30,7 @@ export default function RootLayout() {
   if (!fontsLoaded) {
     return null;
   }
-
-  // Only show NoInternet if we are CERTAIN it's disconnected (isConnected is false)
-  // We check for netInfo.isConnected === false because it might be null/undefined while loading
+  
   if (netInfo.isConnected === false) {
     return (
       <>
