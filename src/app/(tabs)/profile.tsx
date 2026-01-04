@@ -1,61 +1,27 @@
 import { useAuth } from '@/context/AuthContext';
-import { cancelAllNotifications, scheduleDailyNotifications, sendTestNotification } from '@/services/notifications';
-import { seedDatabase } from '@/services/seed';
+import { useFavorites } from '@/context/FavoritesContext';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  ActivityIndicator,
   Alert,
   Image,
+  Linking,
   ScrollView,
+  Switch,
   Text,
   TouchableOpacity,
   View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-interface SettingsItemProps {
-  icon: keyof typeof Ionicons.glyphMap;
-  title: string;
-  onPress?: () => void;
-  textStyle?: string;
-  showArrow?: boolean;
-}
-
-const SettingsItem = ({
-  icon,
-  title,
-  onPress,
-  textStyle,
-  showArrow = true,
-}: SettingsItemProps) => (
-  <TouchableOpacity
-    onPress={onPress}
-    className="flex flex-row items-center justify-between py-3"
-  >
-    <View className="flex flex-row items-center gap-3">
-      <Ionicons name={icon} size={24} className="text-light-text dark:text-dark-text" />
-      <Text className={`text-lg font-bodyMedium text-light-text dark:text-dark-text ${textStyle}`}>
-        {title}
-      </Text>
-    </View>
-
-    {showArrow && (
-      <Ionicons 
-        name="chevron-forward" 
-        size={20} 
-        className="text-light-subtext dark:text-dark-subtext" 
-      />
-    )}
-  </TouchableOpacity>
-);
+import { cancelAllNotifications, scheduleDailyNotifications } from '@/services/notifications';
 
 export default function ProfileScreen() {
   const { user, logout, refetchUser } = useAuth();
+  const { favorites, clearAllFavorites } = useFavorites();
   const router = useRouter();
-  const [isSeeding, setIsSeeding] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const handleLogout = async () => {
@@ -69,43 +35,8 @@ export default function ProfileScreen() {
     }
   };
 
-  const handleSeedDatabase = async () => {
-    Alert.alert(
-      'Seed Database',
-      'This will clear all existing data and create new sample data. Continue?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Continue',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              setIsSeeding(true);
-              const result = await seedDatabase();
-              
-              if (result.success) {
-                Alert.alert('Success', result.message);
-              } else {
-                Alert.alert('Error', result.message);
-              }
-            } catch (error) {
-              console.error('Seed error:', error);
-              Alert.alert('Error', 'Failed to seed database');
-            } finally {
-              setIsSeeding(false);
-            }
-          },
-        },
-      ]
-    );
-  };
-
   const pickImage = async () => {
     try {
-      // Request permission
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
       
       if (!permissionResult.granted) {
@@ -113,7 +44,6 @@ export default function ProfileScreen() {
         return;
       }
 
-      // Launch image picker
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
@@ -123,30 +53,22 @@ export default function ProfileScreen() {
 
       if (!result.canceled && result.assets[0]) {
         const asset = result.assets[0];
-        
-        // Show uploading alert
         Alert.alert('Uploading', 'Please wait while we upload your profile picture...');
         
-        // Import the functions
         const { uploadAvatar, updateUserAvatar } = await import('@/services/appwrite');
         const { appwriteConfig } = await import('@/config/appwrite');
         
-        // Prepare file object
         const file = {
           uri: asset.uri,
           name: `avatar-${Date.now()}.jpg`,
           type: 'image/jpeg',
         };
         
-        // Upload to Appwrite Storage
         const avatarUrl = await uploadAvatar(file, appwriteConfig.bucketId);
-        
-        // Update user avatar in Appwrite preferences
         const success = await updateUserAvatar(avatarUrl);
         
         if (success) {
           Alert.alert('Success', 'Profile picture updated successfully!');
-          // Refresh user data
           await refetchUser();
         } else {
           Alert.alert('Error', 'Failed to update profile picture');
@@ -158,25 +80,25 @@ export default function ProfileScreen() {
     }
   };
 
-  const handleToggleNotifications = async () => {
+
+  const handleSupport = () => {
+    Linking.openURL('mailto:munawwarh48@gmail.com');
+  };
+
+  const handleToggleNotifications = async (value: boolean) => {
     try {
-      if (notificationsEnabled) {
-        // Disable notifications
-        await cancelAllNotifications();
-        setNotificationsEnabled(false);
-        Alert.alert('Disabled', 'Daily notifications have been turned off');
-      } else {
-        // Enable notifications
+      if (value) {
         const success = await scheduleDailyNotifications();
         if (success) {
           setNotificationsEnabled(true);
-          Alert.alert(
-            'Enabled! 🔔',
-            'You will receive daily reminders at:\n• 11:00 AM - Morning reminder\n• 9:00 PM - Evening reminder'
-          );
+          Alert.alert('Enabled! 🔔', 'You will receive daily property updates');
         } else {
           Alert.alert('Error', 'Failed to enable notifications. Please check permissions.');
         }
+      } else {
+        await cancelAllNotifications();
+        setNotificationsEnabled(false);
+        Alert.alert('Disabled', 'Notifications have been turned off');
       }
     } catch (error) {
       console.error('Notification toggle error:', error);
@@ -184,24 +106,6 @@ export default function ProfileScreen() {
     }
   };
 
-  const handleTestNotification = async () => {
-    try {
-      const success = await sendTestNotification();
-      if (success) {
-        Alert.alert('Sent! 🧪', 'Test notification sent successfully!');
-      } else {
-        Alert.alert('Error', 'Failed to send test notification');
-      }
-    } catch (error) {
-      console.error('Test notification error:', error);
-      Alert.alert('Error', 'Failed to send test notification');
-    }
-  };
-
-
- 
-
-  // Get user initials for avatar
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -215,18 +119,17 @@ export default function ProfileScreen() {
     <SafeAreaView className="h-full bg-light-background dark:bg-dark-background">
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerClassName="pb-32 px-7"
+        contentContainerClassName="pb-32 px-5"
       >
         {/* Header */}
-        <View className="flex flex-row items-center justify-between">
-          <Text className="text-xl font-heading text-light-text dark:text-dark-text">Profile</Text>
-          <Ionicons name="notifications-outline" size={24} className="text-light-text dark:text-dark-text" />
+        <View className="flex flex-row items-center justify-between mb-5">
+          <Text className="text-2xl font-heading text-light-text dark:text-dark-text">Profile</Text>
         </View>
 
         {/* User Profile Section */}
-        <View className="flex flex-row justify-center mt-5">
-          <View className="flex flex-col items-center relative mt-5">
-            <View className="size-44 rounded-full bg-light-primary dark:bg-dark-primary items-center justify-center overflow-hidden">
+        <View className="flex flex-row justify-center mb-8">
+          <View className="flex flex-col items-center relative">
+            <View className="size-32 rounded-full bg-light-primary dark:bg-dark-primary items-center justify-center overflow-hidden">
               {user?.avatar && (user.avatar.startsWith('file://') || user.avatar.startsWith('http')) ? (
                 <Image
                   source={{ uri: user.avatar }}
@@ -234,7 +137,7 @@ export default function ProfileScreen() {
                   resizeMode="cover"
                 />
               ) : (
-                <Text className="text-5xl font-heading text-white">
+                <Text className="text-4xl font-heading text-white">
                   {user?.name ? getInitials(user.name) : 'U'}
                 </Text>
               )}
@@ -242,77 +145,147 @@ export default function ProfileScreen() {
             
             <TouchableOpacity 
               onPress={pickImage}
-              className="absolute bottom-11 right-2 bg-light-surface dark:bg-dark-surface rounded-full p-2 shadow-lg"
+              className="absolute bottom-0 right-0 bg-light-primary dark:bg-dark-primary rounded-full p-2 shadow-lg"
             >
-              <Ionicons name="pencil" size={20} className="text-light-primary dark:text-dark-primary" />
+              <Ionicons name="pencil" size={16} color="#FFFFFF" />
             </TouchableOpacity>
 
-            <Text className="text-2xl font-heading mt-2 text-light-text dark:text-dark-text">
+            <Text className="text-xl font-heading mt-3 text-light-text dark:text-dark-text">
               {user?.name || 'User'}
+            </Text>
+            <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext mt-1">
+              {user?.email || ''}
             </Text>
           </View>
         </View>
 
-        {/* My Bookings & Payments Section */}
-        <View className="flex flex-col mt-10">
-          <SettingsItem icon="calendar-outline" title="My Bookings" />
-          <SettingsItem icon="wallet-outline" title="Payments" />
+        {/* NOTIFICATIONS Section */}
+        <Text className="text-xs font-bodyMedium text-light-subtext dark:text-dark-subtext mb-3 uppercase tracking-wider">
+          Notifications
+        </Text>
+        
+        <View className="bg-light-surface dark:bg-dark-surface rounded-2xl p-4 mb-6">
+          <View className="flex-row items-center justify-between">
+            <View className="flex-row items-center flex-1">
+              <View className="size-12 rounded-full bg-blue-100 dark:bg-blue-900/30 items-center justify-center mr-3">
+                <Ionicons name="notifications" size={24} color="#3B82F6" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-base font-bodyMedium text-light-text dark:text-dark-text">
+                  Push Notifications
+                </Text>
+                <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext mt-0.5">
+                  {notificationsEnabled ? 'Enabled' : 'Disabled'}
+                </Text>
+              </View>
+            </View>
+            <Switch
+              value={notificationsEnabled}
+              onValueChange={handleToggleNotifications}
+              trackColor={{ false: '#D1D5DB', true: '#3B82F6' }}
+              thumbColor={notificationsEnabled ? '#FFFFFF' : '#F3F4F6'}
+            />
+          </View>
         </View>
 
-        {/* General Settings Section */}
-        <View className="flex flex-col mt-5 border-t pt-5 border-light-subtext/20 dark:border-dark-subtext/20">
-          <SettingsItem icon="person-outline" title="Edit Profile" />
-          <SettingsItem 
-            icon="notifications-outline" 
-            title={notificationsEnabled ? "Notifications (On)" : "Notifications (Off)"}
-            onPress={handleToggleNotifications}
-          />
-          <SettingsItem 
-            icon="heart-outline" 
-            title="Saved Properties" 
-            onPress={() => router.push('/category/favorites' as any)}
-          />
-          <SettingsItem icon="settings-outline" title="Settings" />
-          <SettingsItem icon="help-circle-outline" title="Help & Support" />
-        </View>
-
-        {/* Developer Tools Section */}
-        <View className="flex flex-col mt-5 border-t pt-5 border-light-subtext/20 dark:border-dark-subtext/20">
-          <Text className="text-sm font-bodyMedium text-light-subtext dark:text-dark-subtext mb-2">
-            Developer Tools
-          </Text>
-          {isSeeding ? (
-            <View className="flex flex-row items-center gap-3 py-3">
-              <ActivityIndicator size="small" color="#3B82F6" />
-              <Text className="text-lg font-bodyMedium text-light-text dark:text-dark-text">
-                Seeding database...
+        {/* SUPPORT Section */}
+        <Text className="text-xs font-bodyMedium text-light-subtext dark:text-dark-subtext mb-3 uppercase tracking-wider">
+          Support
+        </Text>
+        
+        <View className="bg-light-surface dark:bg-dark-surface rounded-2xl p-4 mb-6">
+          <TouchableOpacity onPress={handleSupport} className="flex-row items-center">
+            <View className="size-12 rounded-full bg-orange-100 dark:bg-orange-900/30 items-center justify-center mr-3">
+              <Ionicons name="help-circle" size={24} color="#F97316" />
+            </View>
+            <View className="flex-1">
+              <Text className="text-base font-bodyMedium text-light-text dark:text-dark-text">
+                Help & Support
+              </Text>
+              <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext mt-0.5">
+                Contact us at munawwarh48@gmail.com
               </Text>
             </View>
-          ) : (
-            <>
-              <SettingsItem
-                icon="cloud-upload-outline"
-                title="Seed Database"
-                onPress={handleSeedDatabase}
-              />
-              <SettingsItem
-                icon="notifications-outline"
-                title="Test Notification"
-                onPress={handleTestNotification}
-              />
-            </>
-          )}
+          </TouchableOpacity>
         </View>
 
-        {/* Logout Section */}
-        <View className="flex flex-col border-t mt-5 pt-5 border-light-subtext/20 dark:border-dark-subtext/20">
-          <SettingsItem
-            icon="log-out-outline"
-            title="Logout"
-            textStyle="text-red-500"
-            showArrow={false}
-            onPress={handleLogout}
-          />
+
+
+        {/* LEGAL Section */}
+        <Text className="text-xs font-bodyMedium text-light-subtext dark:text-dark-subtext mb-3 uppercase tracking-wider">
+          Legal
+        </Text>
+        
+        <View className="bg-light-surface dark:bg-dark-surface rounded-2xl p-4 mb-2">
+          <TouchableOpacity 
+            onPress={() => router.push('/terms' as any)}
+            className="flex-row items-center justify-between"
+          >
+            <View className="flex-row items-center flex-1">
+              <View className="size-12 rounded-full bg-gray-100 dark:bg-gray-800 items-center justify-center mr-3">
+                <Ionicons name="document-text" size={24} color="#6B7280" />
+              </View>
+              <Text className="text-base font-bodyMedium text-light-text dark:text-dark-text">
+                Terms & Conditions
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+          </TouchableOpacity>
+        </View>
+
+        <View className="bg-light-surface dark:bg-dark-surface rounded-2xl p-4 mb-6">
+          <TouchableOpacity 
+            onPress={() => router.push('/privacy' as any)}
+            className="flex-row items-center justify-between"
+          >
+            <View className="flex-row items-center flex-1">
+              <View className="size-12 rounded-full bg-gray-100 dark:bg-gray-800 items-center justify-center mr-3">
+                <Ionicons name="shield-checkmark" size={24} color="#6B7280" />
+              </View>
+              <Text className="text-base font-bodyMedium text-light-text dark:text-dark-text">
+                Privacy Policy
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+          </TouchableOpacity>
+        </View>
+
+        {/* ABOUT Section */}
+        <Text className="text-xs font-bodyMedium text-light-subtext dark:text-dark-subtext mb-3 uppercase tracking-wider">
+          About
+        </Text>
+        
+        <View className="bg-light-surface dark:bg-dark-surface rounded-2xl p-4 mb-6">
+          <TouchableOpacity 
+            onPress={() => router.push('/about' as any)}
+            className="flex-row items-center justify-between"
+          >
+            <View className="flex-row items-center flex-1">
+              <View className="size-12 rounded-full bg-gray-100 dark:bg-gray-800 items-center justify-center mr-3">
+                <Ionicons name="information-circle" size={24} color="#6B7280" />
+              </View>
+              <Text className="text-base font-bodyMedium text-light-text dark:text-dark-text">
+                About
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+          </TouchableOpacity>
+        </View>
+
+        {/* LOGOUT Section */}
+        <Text className="text-xs font-bodyMedium text-light-subtext dark:text-dark-subtext mb-3 mt-6 uppercase tracking-wider">
+          Logout
+        </Text>
+        
+        <View className="bg-light-surface dark:bg-dark-surface rounded-2xl p-4 mb-6">
+          <TouchableOpacity onPress={handleLogout} className="flex-row items-center">
+            <View className="size-12 rounded-full bg-red-100 dark:bg-red-900/30 items-center justify-center mr-3">
+              <Ionicons name="log-out" size={24} color="#EF4444" />
+            </View>
+            <Text className="text-base font-bodyMedium text-red-500">
+              Logout
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
