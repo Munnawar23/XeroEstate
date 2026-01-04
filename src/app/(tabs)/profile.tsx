@@ -68,7 +68,7 @@ export default function ProfileScreen() {
         const asset = result.assets[0];
         Alert.alert('Uploading', 'Please wait while we upload your profile picture...');
         
-        const { uploadAvatar, updateUserAvatar } = await import('@/services/appwrite');
+        const { uploadAvatar, updateUserAvatar } = await import('@/services/avatar');
         const { appwriteConfig } = await import('@/config/appwrite');
         
         const file = {

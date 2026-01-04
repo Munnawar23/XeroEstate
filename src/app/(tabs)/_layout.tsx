@@ -14,24 +14,27 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: isDark ? '#D4D4D8' : '#1E40AF',
-        tabBarInactiveTintColor: isDark ? '#737373' : '#64748B',
+        tabBarActiveTintColor: isDark ? '#3B82F6' : '#2563EB',
+        tabBarInactiveTintColor: isDark ? '#94A3B8' : '#64748B',
         tabBarStyle: {
-          backgroundColor: isDark ? '#171717' : '#FFFFFF',
+          backgroundColor: isDark ? '#0F172A' : '#FFFFFF',
           borderTopWidth: 1,
-          borderTopColor: isDark ? '#262626' : '#E5E7EB',
-          height: 50 + bottom,
-          paddingBottom: bottom > 0 ? bottom : 8,
+          borderTopColor: isDark ? '#1E293B' : '#CBD5E1',
+          height: bottom > 0 ? 50 + bottom : 60,
+          paddingBottom: bottom > 0 ? bottom - 10 : 10,
           paddingTop: 8,
+          elevation: 0,
+          shadowOpacity: 0,
         },
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: '600',
+          fontFamily: 'SourceSans3-SemiBold', 
         },
       }}
       screenListeners={{
         tabPress: () => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         },
       }}
     >

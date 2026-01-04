@@ -1,4 +1,3 @@
-// Property type definition based on Appwrite database schema
 export interface Property {
   $id: string;
   name: string;
@@ -14,7 +13,6 @@ export interface Property {
   geolocation?: string;
   facilities?: string[];
   agent?: Agent;
-  gallery?: Gallery[];
   $createdAt?: string;
   $updatedAt?: string;
 }
@@ -28,14 +26,6 @@ export interface Agent {
   $updatedAt?: string;
 }
 
-export interface Gallery {
-  $id: string;
-  image: string;
-  $createdAt?: string;
-  $updatedAt?: string;
-}
-
-// Local property type for UI (compatible with existing code)
 export interface PropertyCardData {
   id: string;
   name: string;

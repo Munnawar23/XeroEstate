@@ -1,4 +1,4 @@
-import { login as appwriteLogin, logout as appwriteLogout, getCurrentUser } from '@/services/appwrite';
+import { login as appwriteLogin, logout as appwriteLogout, getCurrentUser } from '@/services/auth';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 interface User {

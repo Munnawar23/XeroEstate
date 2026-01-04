@@ -7,8 +7,6 @@ export const appwriteConfig = {
   collections: {
     properties: process.env.EXPO_PUBLIC_APPWRITE_PROPERTIES_COLLECTION_ID!,
     agents: process.env.EXPO_PUBLIC_APPWRITE_AGENTS_COLLECTION_ID!,
-
-    galleries: process.env.EXPO_PUBLIC_APPWRITE_GALLERIES_COLLECTION_ID!,
   },
   
   bucketId: process.env.EXPO_PUBLIC_APPWRITE_BUCKET_ID!,

@@ -153,44 +153,5 @@ export async function cancelAllNotifications() {
   }
 }
 
-// Get all scheduled notifications (for debugging)
-export async function getScheduledNotifications() {
-  try {
-    const notifications = await Notifications.getAllScheduledNotificationsAsync();
-    console.log('Scheduled notifications:', notifications);
-    return notifications;
-  } catch (error) {
-    console.error('Error getting scheduled notifications:', error);
-    return [];
-  }
-}
 
-// Send test notification immediately (for testing)
-export async function sendTestNotification() {
-  try {
-    const hasPermission = await requestNotificationPermissions();
-    
-    if (!hasPermission) {
-      console.log('Cannot send test notification without permission');
-      return false;
-    }
-
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: '🧪 Test Notification',
-        body: 'This is a test notification from XeroEstate!',
-        sound: true,
-        priority: Notifications.AndroidNotificationPriority.HIGH,
-        data: { screen: 'home', test: true },
-      },
-      trigger: null, // Send immediately
-    });
-
-    console.log('Test notification sent');
-    return true;
-  } catch (error) {
-    console.error('Error sending test notification:', error);
-    return false;
-  }
-}
 

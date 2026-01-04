@@ -2,12 +2,10 @@ import { appwriteConfig } from "@/config/appwrite";
 import * as Linking from "expo-linking";
 import { openAuthSessionAsync } from "expo-web-browser";
 import {
-  Account,
-  Avatars,
-  Client,
-  ID,
-  OAuthProvider,
-  Storage
+    Account,
+    Avatars,
+    Client,
+    OAuthProvider
 } from "react-native-appwrite";
 import "react-native-url-polyfill/auto";
 
@@ -17,11 +15,8 @@ client
   .setProject(appwriteConfig.projectId)
   .setPlatform(appwriteConfig.platform);
 
-  
 export const avatar = new Avatars(client);
 export const account = new Account(client);
-export const storage = new Storage(client);
-
 
 export async function login() {
   try {
@@ -104,51 +99,5 @@ export async function getCurrentUser() {
   } catch (error) {
     console.log(error);
     return null;
-  }
-}
-
-// Upload avatar to Appwrite Storage
-export async function uploadAvatar(file: { uri: string; name: string; type: string }, bucketId: string) {
-  try {
-    // Fetch the file to get its size
-    const response = await fetch(file.uri);
-    const blob = await response.blob();
-    
-    // Create file object in the format expected by react-native-appwrite
-    const fileObject = {
-      name: file.name,
-      type: file.type,
-      size: blob.size,
-      uri: file.uri,
-    };
-    
-    const uploadedFile = await storage.createFile(
-      bucketId,
-      ID.unique(),
-      fileObject as any
-    );
-
-    // Construct the file URL manually
-    const fileUrl = `${appwriteConfig.endpoint}/storage/buckets/${bucketId}/files/${uploadedFile.$id}/view?project=${appwriteConfig.projectId}`;
-    
-    console.log('Uploaded avatar URL:', fileUrl);
-    
-    return fileUrl;
-  } catch (error) {
-    console.error("Upload error:", error);
-    throw error;
-  }
-}
-
-// Update user's avatar in preferences
-export async function updateUserAvatar(avatarUrl: string) {
-  try {
-    await account.updatePrefs({
-      avatarUrl,
-    });
-    return true;
-  } catch (error) {
-    console.error("Update avatar error:", error);
-    return false;
   }
 }

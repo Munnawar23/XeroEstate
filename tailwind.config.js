@@ -5,24 +5,26 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Light Theme (unchanged)
+        // Light Theme: Focus on clarity and high-end photography
         light: {
-          background: "#FAFAFA",
-          surface: "#FFFFFF",
-          text: "#0F172A",
-          subtext: "#64748B",
-          primary: "#1E40AF",
-          accent: "#0F766E",
+          background: "#F1F5F9", // Slate-100: Makes white cards pop
+          surface: "#FFFFFF",    // Pure White: For listing cards
+          text: "#0F172A",       // Slate-900: Professional ink black
+          subtext: "#475569",    // Slate-600: Accessible grey for details
+          primary: "#2563EB",    // Blue-600: The "Action" color for buttons
+          accent: "#F59E0B",     // Amber: For "Featured" or "Price Drop"
+          border: "#CBD5E1",     // Slate-300: Clean lines
         },
 
-        // Dark Theme (Grey Luxury)
+        // Dark Theme: "OLED" optimized luxury
         dark: {
-          background: "#0B0B0C",  // deep charcoal
-          surface: "#171717",     // card background
-          text: "#F5F5F5",        // off-white
-          subtext: "#A1A1AA",     // neutral grey
-          primary: "#737373",     // elegant grey (replaces blue)
-          accent: "#D4D4D8",      // soft silver highlight
+          background: "#020617", // Slate-950: Deepest navy-black
+          surface: "#0F172A",    // Slate-900: Elevated card color
+          text: "#F8FAFC",       // Slate-50: Crisp white
+          subtext: "#94A3B8",    // Slate-400: Muted metadata
+          primary: "#3B82F6",    // Blue-500: Vibrant digital blue
+          accent: "#FBBF24",     // Amber-400: Golden highlights
+          border: "#1E293B",     // Slate-800: Subtle separation
         },
       },
 
@@ -35,4 +37,4 @@ module.exports = {
     },
   },
   plugins: [],
-};
+};  
