@@ -361,7 +361,7 @@ export default function ProfileScreen() {
           About
         </Text>
 
-        <View className="bg-light-surface dark:bg-dark-surface rounded-2xl p-4 mb-6">
+        <View className="bg-light-surface dark:bg-dark-surface rounded-2xl p-4 mb-3">
           <TouchableOpacity
             onPress={handleAboutPress}
             className="flex-row items-center justify-between"
@@ -379,7 +379,7 @@ export default function ProfileScreen() {
         </View>
 
         {/* LOGOUT Section */}
-        <Text className="text-xs font-bodyMedium text-light-subtext dark:text-dark-subtext mb-3 mt-6 uppercase tracking-wider">
+        <Text className="text-xs font-bodyMedium text-light-subtext dark:text-dark-subtext mb-3 mt-3 uppercase tracking-wider">
           Logout
         </Text>
 

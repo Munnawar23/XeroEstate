@@ -204,9 +204,6 @@ const HomeScreen = () => {
                 Estate
               </Text>
             </View>
-            <Text className="text-base font-body text-light-subtext dark:text-dark-subtext text-center mt-3 max-w-xs">
-              Your trusted platform for buying and selling premium properties
-            </Text>
             <Text className="text-md font-bodyMedium text-light-subtext dark:text-dark-subtext text-center mt-4">
               Version 1.0.0
             </Text>
