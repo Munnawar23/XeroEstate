@@ -1,4 +1,5 @@
 import { useAuth } from "@/context/AuthContext";
+import { useFavorites } from "@/context/FavoritesContext";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
@@ -25,6 +26,7 @@ import {
 export default function ProfileScreen() {
   const { user, logout, refetchUser } = useAuth();
   const router = useRouter();
+  const { favorites } = useFavorites();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const handleLogout = async () => {
@@ -170,6 +172,11 @@ export default function ProfileScreen() {
     router.push("/profile/about" as any);
   };
 
+  const handleSavedPropertiesPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    router.push("/category/favorites" as any);
+  };
+
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -257,6 +264,33 @@ export default function ProfileScreen() {
               thumbColor={notificationsEnabled ? "#FFFFFF" : "#F3F4F6"}
             />
           </View>
+        </View>
+
+        {/* SAVED PROPERTIES Section */}
+        <Text className="text-xs font-bodyMedium text-light-subtext dark:text-dark-subtext mb-3 uppercase tracking-wider">
+          Saved Properties
+        </Text>
+
+        <View className="bg-light-surface dark:bg-dark-surface rounded-2xl p-4 mb-6">
+          <TouchableOpacity
+            onPress={handleSavedPropertiesPress}
+            className="flex-row items-center justify-between"
+          >
+            <View className="flex-row items-center flex-1">
+              <View className="size-12 rounded-full bg-red-100 dark:bg-red-900/30 items-center justify-center mr-3">
+                <Ionicons name="heart" size={24} color="#EF4444" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-base font-bodyMedium text-light-text dark:text-dark-text">
+                  Saved Properties
+                </Text>
+                <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext mt-0.5">
+                  {favorites.length} {favorites.length === 1 ? "property" : "properties"} saved
+                </Text>
+              </View>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+          </TouchableOpacity>
         </View>
 
         {/* SUPPORT Section */}
