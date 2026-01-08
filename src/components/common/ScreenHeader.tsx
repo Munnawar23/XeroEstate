@@ -21,7 +21,7 @@ const ScreenHeader = ({
 
   const handleBackPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    
+
     if (onBackPress) {
       onBackPress();
     } else {
@@ -30,21 +30,21 @@ const ScreenHeader = ({
   };
 
   return (
-    <View className="flex flex-row items-center px-5 py-4 border-b border-light-subtext/10 dark:border-dark-subtext/10">
+    <View className="flex flex-row items-center px-5 py-4 border-b border-light-border dark:border-dark-border">
       {showBackButton && (
         <TouchableOpacity
           onPress={handleBackPress}
-          className="flex flex-row bg-light-surface dark:bg-dark-surface rounded-full size-11 items-center justify-center shadow-sm mr-3"
+          className="mr-3 size-11 items-center justify-center rounded-full bg-light-surface dark:bg-dark-surface shadow-sm"
         >
           <Ionicons
             name="arrow-back"
             size={20}
-            color={isDark ? "#D4D4D8" : "#18181B"}
+            color={isDark ? "#D1D5DB" : "#374151"}
           />
         </TouchableOpacity>
       )}
 
-      <Text className="text-xl font-heading text-light-text dark:text-dark-text flex-1">
+      <Text className="flex-1 text-xl font-heading text-light-text dark:text-dark-text">
         {title}
       </Text>
     </View>

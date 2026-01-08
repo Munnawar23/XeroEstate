@@ -1,28 +1,16 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import React from 'react';
 import {
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View
+  ScrollView,
+  Text
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function TermsScreen() {
-  const router = useRouter();
+import ScreenHeader from '@/components/common/ScreenHeader';
 
+export default function TermsScreen() {
   return (
     <SafeAreaView className="flex-1 bg-light-background dark:bg-dark-background" edges={['top']}>
-      {/* Custom Header */}
-      <View className="flex-row items-center px-5 py-4 border-b border-light-subtext/20 dark:border-dark-subtext/20">
-        <TouchableOpacity onPress={() => router.back()} className="mr-4">
-          <Ionicons name="arrow-back" size={24} className="text-light-text dark:text-dark-text" />
-        </TouchableOpacity>
-        <Text className="text-xl font-heading text-light-text dark:text-dark-text">
-          Terms & Conditions
-        </Text>
-      </View>
+      <ScreenHeader title="Terms & Conditions" />
 
       <ScrollView className="flex-1 px-5 py-6">
         <Text className="text-sm font-body text-light-subtext dark:text-dark-subtext mb-6">

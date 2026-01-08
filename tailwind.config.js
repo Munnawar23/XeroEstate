@@ -5,26 +5,26 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Light Theme: Focus on clarity and high-end photography
+        // Light Theme — Bright, soft, neutral
         light: {
-          background: "#F1F5F9", // Slate-100: Makes white cards pop
-          surface: "#FFFFFF",    // Pure White: For listing cards
-          text: "#0F172A",       // Slate-900: Professional ink black
-          subtext: "#475569",    // Slate-600: Accessible grey for details
-          primary: "#2563EB",    // Blue-600: The "Action" color for buttons
-          accent: "#F59E0B",     // Amber: For "Featured" or "Price Drop"
-          border: "#CBD5E1",     // Slate-300: Clean lines
+          background: "#FAFAFA", // almost white
+          surface: "#FFFFFF",    // pure white cards
+          text: "#1F2937",       // soft charcoal
+          subtext: "#6B7280",    // neutral gray
+          primary: "#60A5FA",    // soft sky blue
+          accent: "#A7F3D0",     // light mint accent
+          border: "#E5E7EB",     // subtle light gray
         },
 
-        // Dark Theme: "OLED" optimized luxury
+        // Dark Theme — True gray dark mode
         dark: {
-          background: "#020617", // Slate-950: Deepest navy-black
-          surface: "#0F172A",    // Slate-900: Elevated card color
-          text: "#F8FAFC",       // Slate-50: Crisp white
-          subtext: "#94A3B8",    // Slate-400: Muted metadata
-          primary: "#3B82F6",    // Blue-500: Vibrant digital blue
-          accent: "#FBBF24",     // Amber-400: Golden highlights
-          border: "#1E293B",     // Slate-800: Subtle separation
+          background: "#0F0F10", // near-black gray
+          surface: "#1A1A1D",    // dark gray cards
+          text: "#F3F4F6",       // soft white
+          subtext: "#9CA3AF",    // muted gray
+          primary: "#93C5FD",    // softened blue (low contrast)
+          accent: "#6EE7B7",     // soft mint highlight
+          border: "#262626",     // subtle gray border
         },
       },
 
@@ -37,4 +37,4 @@ module.exports = {
     },
   },
   plugins: [],
-};  
+};

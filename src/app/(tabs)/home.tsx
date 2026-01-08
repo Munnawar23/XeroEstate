@@ -16,9 +16,9 @@ import Toast from "react-native-toast-message";
 import Filters from "@/components/common/Filters";
 import HomeCard from "@/components/common/HomeCard";
 import PremiumCard from "@/components/common/PremiumCard";
-import EmptyState from "@/components/layout/EmptyState";
-import ErrorState from "@/components/layout/ErrorState";
-import LoadingState from "@/components/layout/LoadingState";
+import EmptyState from "@/components/ui/EmptyState";
+import ErrorState from "@/components/ui/ErrorState";
+import LoadingState from "@/components/ui/LoadingState";
 import { useHome } from "@/hooks/useHome";
 
 

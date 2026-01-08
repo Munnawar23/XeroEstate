@@ -1,9 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
+import { useColorScheme } from "nativewind";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   Dimensions,
   Image,
   Linking,
@@ -11,10 +11,13 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import Toast from "react-native-toast-message";
 
+import EmptyState from "@/components/ui/EmptyState";
+import ErrorState from "@/components/ui/ErrorState";
+import LoadingState from "@/components/ui/LoadingState";
 import { facilities } from "@/constants/data";
 import { useFavorites } from "@/context/FavoritesContext";
 import { getPropertyById } from "@/services/database";
@@ -24,19 +27,24 @@ const PropertyDetails = () => {
   const { id } = useLocalSearchParams<{ id?: string }>();
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const windowHeight = Dimensions.get("window").height;
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   useEffect(() => {
     const fetchProperty = async () => {
       if (!id) return;
-      
+
       try {
         setLoading(true);
+        setError(null);
         const data = await getPropertyById(id);
         setProperty(data);
       } catch (error) {
         console.error("Error fetching property:", error);
+        setError("Failed to load property details");
       } finally {
         setLoading(false);
       }
@@ -47,9 +55,9 @@ const PropertyDetails = () => {
 
   const handleFavoritePress = () => {
     if (!property) return;
-    
+
     const isCurrentlyFavorite = isFavorite(property.$id);
-    
+
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     toggleFavorite({
       id: property.$id,
@@ -61,71 +69,92 @@ const PropertyDetails = () => {
     });
 
     Toast.show({
-      type: 'success',
-      text1: !isCurrentlyFavorite ? 'Added to favorites!' : 'Removed from favorites',
-      text2: !isCurrentlyFavorite ? '❤️ Property saved' : '💔 Property removed',
-      position: 'top',
+      type: "success",
+      text1: !isCurrentlyFavorite
+        ? "Added to favorites!"
+        : "Removed from favorites",
+      text2: !isCurrentlyFavorite ? "❤️ Property saved" : "💔 Property removed",
+      position: "top",
       visibilityTime: 2000,
     });
   };
 
   const handleGetDirections = () => {
     if (!property || !property.geolocation) return;
-    
+
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    
+
     // Parse coordinates from geolocation string (format: "lat,lng")
-    const [latitude, longitude] = property.geolocation.split(',').map(coord => coord.trim());
-    
+    const [latitude, longitude] = property.geolocation
+      .split(",")
+      .map((coord) => coord.trim());
+
     // Create maps URL based on platform
     const scheme = Platform.select({
-      ios: 'maps:', // Apple Maps
-      android: 'geo:', // Google Maps
+      ios: "maps:", // Apple Maps
+      android: "geo:", // Google Maps
     });
-    
+
     const url = Platform.select({
       ios: `${scheme}0,0?q=${latitude},${longitude}`,
       android: `${scheme}0,0?q=${latitude},${longitude}(${encodeURIComponent(property.name)})`,
     });
-    
+
     // Open maps app
-    Linking.openURL(url || '').catch(err => {
-      console.error('Error opening maps:', err);
+    Linking.openURL(url || "").catch((err) => {
+      console.error("Error opening maps:", err);
       Toast.show({
-        type: 'error',
-        text1: 'Could not open maps',
-        text2: 'Please try again',
-        position: 'top',
+        type: "error",
+        text1: "Could not open maps",
+        text2: "Please try again",
+        position: "top",
         visibilityTime: 2000,
       });
     });
   };
 
+  const handleBackPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    router.back();
+  };
+
+  const handleCallPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    Linking.openURL("tel:0000000000");
+  };
+
+  // Show loading state
   if (loading) {
+    return <LoadingState message="Loading property details..." />;
+  }
+
+  // Show error state
+  if (error) {
     return (
-      <View className="flex-1 items-center justify-center bg-light-background dark:bg-dark-background">
-        <ActivityIndicator size="large" color="#3B82F6" />
-        <Text className="text-base font-bodyMedium text-light-subtext dark:text-dark-subtext mt-4">
-          Loading property details...
-        </Text>
-      </View>
+      <ErrorState
+        title="Failed to load property"
+        message={error}
+        onRetry={() => {
+          setError(null);
+          setLoading(true);
+          if (id) {
+            getPropertyById(id)
+              .then(setProperty)
+              .catch(() => setError("Failed to load property details"))
+              .finally(() => setLoading(false));
+          }
+        }}
+      />
     );
   }
 
+  // Show empty state if property not found
   if (!property) {
     return (
-      <View className="flex-1 items-center justify-center bg-light-background dark:bg-dark-background px-5">
-        <Ionicons name="home-outline" size={64} color="#94A3B8" />
-        <Text className="text-lg font-bodyMedium text-light-text dark:text-dark-text mt-4">
-          Property not found
-        </Text>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          className="mt-6 bg-light-primary dark:bg-dark-primary px-6 py-3 rounded-lg"
-        >
-          <Text className="text-base font-bodyMedium text-white">Go Back</Text>
-        </TouchableOpacity>
-      </View>
+      <EmptyState
+        title="Property not found"
+        message="The property you're looking for doesn't exist"
+      />
     );
   }
 
@@ -147,29 +176,33 @@ const PropertyDetails = () => {
           <View
             className="absolute inset-x-5 flex flex-row items-center justify-between"
             style={{
-              top: Platform.OS === "ios" ? 60 : 40,
+              top: Platform.OS === "ios" ? 50 : 45,
             }}
           >
             <TouchableOpacity
-              onPress={() => router.back()}
+              onPress={handleBackPress}
               className="bg-light-surface/90 dark:bg-dark-surface/90 rounded-full size-11 items-center justify-center"
             >
               <Ionicons
                 name="arrow-back"
                 size={20}
-                className="text-light-text dark:text-dark-text"
+                color={isDark ? "#D1D5DB" : "#374151"}
               />
             </TouchableOpacity>
 
             <View className="flex flex-row items-center gap-3">
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={handleFavoritePress}
                 className="bg-light-surface/90 dark:bg-dark-surface/90 rounded-full size-11 items-center justify-center"
               >
-                <Ionicons 
-                  name={property && isFavorite(property.$id) ? "heart" : "heart-outline"} 
-                  size={24} 
-                  color="#EF4444" 
+                <Ionicons
+                  name={
+                    property && isFavorite(property.$id)
+                      ? "heart"
+                      : "heart-outline"
+                  }
+                  size={24}
+                  color="#EF4444"
                 />
               </TouchableOpacity>
             </View>
@@ -256,14 +289,14 @@ const PropertyDetails = () => {
                 </View>
 
                 <View className="flex flex-row items-center gap-3">
-                  <TouchableOpacity 
-                    onPress={() => Linking.openURL("tel:0000000000")}
+                  <TouchableOpacity
+                    onPress={handleCallPress}
                     className="bg-light-surface dark:bg-dark-surface rounded-full size-10 items-center justify-center"
                   >
                     <Ionicons
                       name="call-outline"
                       size={20}
-                      className="text-light-primary dark:text-dark-primary"
+                      color={isDark ? "#93C5FD" : "#60A5FA"} 
                     />
                   </TouchableOpacity>
                 </View>
@@ -291,7 +324,8 @@ const PropertyDetails = () => {
               <View className="flex flex-row flex-wrap items-start justify-start mt-3 gap-4">
                 {property.facilities.map((item: string, index: number) => {
                   const facility = facilities.find(
-                    (f: { title: string; value: string }) => f.value === item || f.title === item
+                    (f: { title: string; value: string }) =>
+                      f.value === item || f.title === item
                   );
 
                   return (
@@ -321,7 +355,6 @@ const PropertyDetails = () => {
             </View>
           )}
 
-
           {/* Location */}
           <View className="mt-5">
             <Text className="text-light-text dark:text-dark-text text-xl font-heading">
@@ -334,8 +367,6 @@ const PropertyDetails = () => {
               </Text>
             </View>
           </View>
-
-
         </View>
       </ScrollView>
 
@@ -354,7 +385,7 @@ const PropertyDetails = () => {
             </Text>
           </View>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={handleGetDirections}
             className="flex-1 flex flex-row items-center justify-center bg-light-primary dark:bg-dark-primary py-3 rounded-xl shadow-lg gap-2"
           >

@@ -16,9 +16,9 @@ import Toast from "react-native-toast-message";
 import Filters from "@/components/common/Filters";
 import HomeCard from "@/components/common/HomeCard";
 import Search from "@/components/common/Search";
-import EmptyState from "@/components/layout/EmptyState";
-import ErrorState from "@/components/layout/ErrorState";
-import LoadingState from "@/components/layout/LoadingState";
+import EmptyState from "@/components/ui/EmptyState";
+import ErrorState from "@/components/ui/ErrorState";
+import LoadingState from "@/components/ui/LoadingState";
 import { useProperties } from "@/hooks/useProperties";
 
 const ITEMS_PER_PAGE = 8;
@@ -105,7 +105,7 @@ const Explore = () => {
     <SafeAreaView 
       className="flex-1 bg-light-background dark:bg-dark-background" 
       edges={['top']}
-      style={{ paddingTop: 10 }}
+      style={{ paddingTop: 15 }}
     >
       <ScrollView
         className="flex-1"
@@ -126,12 +126,12 @@ const Explore = () => {
         </View>
 
         {/* Search Section */}
-        <View className="px-5 mt-3">
+        <View className="px-5">
           <Search />
         </View>
 
         {/* Filters Section */}
-        <View className="px-5 mt-5">
+        <View className="px-5 mt-2">
           <Filters />
         </View>
 
