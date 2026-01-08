@@ -157,17 +157,17 @@ export default function ProfileScreen() {
 
   const handleTermsPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    router.push("/terms" as any);
+    router.push("/profile/terms" as any);
   };
 
   const handlePrivacyPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    router.push("/privacy" as any);
+    router.push("/profile/privacy" as any);
   };
 
   const handleAboutPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    router.push("/about" as any);
+    router.push("/profile/about" as any);
   };
 
   const getInitials = (name: string) => {
